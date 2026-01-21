@@ -1,0 +1,74 @@
+export type TransactionType = 'income' | 'expense';
+
+export interface UserProfile {
+    uid: string;
+    email: string | null;
+    displayName: string | null;
+    photoURL: string | null;
+    currency?: string;
+    darkMode?: boolean; // Persisted preference
+}
+
+export interface Category {
+    id: string;
+    userId: string;
+    name: string;
+    type: TransactionType;
+    icon?: string; // Icon name from lucide-react
+    color?: string; // Hex code or tailwind class
+    isDefault?: boolean;
+    subCategories?: string[]; // List of available subcategories
+}
+
+export interface Transaction {
+    id: string;
+    userId: string;
+    amount: number;
+    categoryId: string;
+    date: string; // ISO date string YYYY-MM-DD
+    note?: string;
+    location?: string; // e.g., 'Bank', 'Cash', 'GCash'
+    type: TransactionType;
+    createdAt?: number; // Timestamp
+    subCategory?: string; // Selected subcategory
+}
+
+export interface Budget {
+    id: string;
+    userId: string;
+    categoryId: string; // 'all' or specific category ID
+    amount: number;
+    month: string; // YYYY-MM format or 'recurring'
+}
+
+export interface Goal {
+    id: string;
+    userId: string;
+    name: string;
+    targetAmount: number;
+    currentAmount: number;
+    deadline?: string; // ISO date YYYY-MM-DD
+    location?: string; // Storage location: Bank, Wallet, GCash, etc.
+    icon?: string;
+    color?: string;
+    createdAt?: number;
+}
+
+export type RecurringFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
+
+export interface RecurringTransaction {
+    id: string;
+    userId: string;
+    name: string;
+    amount: number;
+    categoryId: string;
+    type: TransactionType;
+    frequency: RecurringFrequency;
+    startDate: string; // YYYY-MM-DD
+    nextDueDate: string; // YYYY-MM-DD - when the next transaction should be created
+    isActive: boolean;
+    note?: string;
+    location?: string;
+    subCategory?: string;
+    createdAt?: number;
+}
