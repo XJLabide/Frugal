@@ -37,7 +37,7 @@ export default function DashboardLayout({
             <aside className="hidden md:block">
                 <Sidebar />
             </aside>
-            <main className="flex-1 overflow-y-auto p-4 pb-20 md:p-8 md:pb-8">{children}</main>
+            <main className="flex-1 overflow-y-auto px-4 pt-4 pb-24 md:px-8 md:pt-8 md:pb-8">{children}</main>
             <MobileNav />
         </div>
     );
