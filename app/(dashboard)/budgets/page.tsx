@@ -7,16 +7,18 @@ import { useCategories } from "@/hooks/useCategories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Trash2, AlertTriangle, Target, Wallet, PieChart, Pencil, ChevronDown, ChevronUp, GripVertical, X } from "lucide-react";
+import { Plus, Trash2, AlertTriangle, Target, Wallet, PieChart, Pencil, ChevronDown, ChevronUp, GripVertical, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { BudgetForm } from "@/components/forms/BudgetForm";
-import { format } from "date-fns";
+import { format, addMonths, subMonths } from "date-fns";
 import { cn, CURRENCY_SYMBOL } from "@/lib/utils";
 import { Budget } from "@/types";
+import { MonthYearPicker } from "@/components/ui/month-year-picker";
 
 export default function BudgetsPage() {
-    const [selectedMonth, setSelectedMonth] = useState(format(new Date(), "yyyy-MM"));
+    const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
+    const selectedMonthKey = format(selectedMonth, "yyyy-MM");
     const {
         loading: budgetsLoading,
         deleteBudget,
@@ -59,7 +61,7 @@ export default function BudgetsPage() {
     let totalSpending = 0;
 
     transactions.forEach(t => {
-        if (t.date.startsWith(selectedMonth) && t.type === 'expense') {
+        if (t.date.startsWith(selectedMonthKey) && t.type === 'expense') {
             spendingMap[t.categoryId] = (spendingMap[t.categoryId] || 0) + t.amount;
             totalSpending += t.amount;
 
@@ -71,9 +73,9 @@ export default function BudgetsPage() {
     });
 
     const getProgressColor = (percentage: number) => {
-        if (percentage >= 100) return "from-red-500 to-rose-500";
-        if (percentage >= 80) return "from-amber-500 to-orange-500";
-        return "from-green-500 to-emerald-500";
+        if (percentage >= 100) return "bg-red-500";
+        if (percentage >= 80) return "bg-amber-500";
+        return "bg-green-500";
     };
 
     const getStatusLabel = (percentage: number) => {
@@ -179,30 +181,39 @@ export default function BudgetsPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Budgets</h2>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Budgets</h2>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm md:text-base">
                         Set monthly spending limits and track your progress
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
-                    {/* Month selector for viewing spending (not for budgets) */}
-                    <div className="flex flex-col items-end">
-                        <span className="text-xs text-slate-500 mb-1">Viewing spending for:</span>
-                        <input
-                            type="month"
-                            className="h-10 px-3 rounded-lg border text-sm focus:ring-2 focus:ring-indigo-500/20 transition-colors"
-                            style={{
-                                backgroundColor: 'var(--input-bg)',
-                                borderColor: 'var(--input-border)',
-                                color: 'var(--input-text)',
-                            }}
-                            value={selectedMonth}
-                            onChange={(e) => setSelectedMonth(e.target.value)}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    {/* Month selector for viewing spending */}
+                    <div className="flex items-center gap-2 flex-1">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-10 w-10 shrink-0"
+                            onClick={() => setSelectedMonth(prev => subMonths(prev, 1))}
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <MonthYearPicker
+                            date={selectedMonth}
+                            onChange={setSelectedMonth}
+                            className="flex-1 sm:w-[160px] sm:flex-none shrink-0"
                         />
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-10 w-10 shrink-0"
+                            onClick={() => setSelectedMonth(prev => addMonths(prev, 1))}
+                        >
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
                     </div>
-                    <Button onClick={() => setIsModalOpen(true)} className="group">
+                    <Button onClick={() => setIsModalOpen(true)} className="group w-full sm:w-auto">
                         <Plus className="mr-2 h-4 w-4 transition-transform group-hover:rotate-90" />
                         Set Budget
                     </Button>
@@ -211,7 +222,7 @@ export default function BudgetsPage() {
 
             {/* Overall Budget Card - The Main Limit */}
             <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-6 text-white">
+                <div className="bg-indigo-600 p-6 text-white">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -255,7 +266,7 @@ export default function BudgetsPage() {
                             {/* Spending Progress */}
                             <div className="space-y-2 mb-4">
                                 <div className="flex justify-between text-sm">
-                                    <span className="opacity-80">Spent in {format(new Date(selectedMonth + "-01"), "MMMM yyyy")}</span>
+                                    <span className="opacity-80">Spent in {format(selectedMonth, "MMMM yyyy")}</span>
                                     <span className="font-medium">{CURRENCY_SYMBOL}{totalSpending.toFixed(2)} ({Math.round(overallSpentPercentage)}%)</span>
                                 </div>
                                 <div className="h-2 bg-white/20 rounded-full overflow-hidden">
@@ -328,7 +339,7 @@ export default function BudgetsPage() {
                                     <div className="flex items-start justify-between mb-3">
                                         <div className="flex items-center gap-3">
                                             <div className={cn(
-                                                "p-2.5 rounded-xl bg-gradient-to-br",
+                                                "p-2.5 rounded-xl text-white",
                                                 getProgressColor(percentage)
                                             )}>
                                                 <Target className="h-4 w-4 text-white" />
@@ -372,7 +383,7 @@ export default function BudgetsPage() {
                                         <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                                             <div
                                                 className={cn(
-                                                    "h-full rounded-full bg-gradient-to-r transition-all duration-700",
+                                                    "h-full rounded-full transition-all duration-700",
                                                     getProgressColor(percentage)
                                                 )}
                                                 style={{ width: `${Math.min(percentage, 100)}%` }}

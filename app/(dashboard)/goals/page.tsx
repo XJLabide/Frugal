@@ -108,12 +108,12 @@ export default function GoalsPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Goals</h2>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Goals</h2>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm md:text-base">
                         Track your savings goals and watch your progress
                     </p>
                 </div>
-                <Button onClick={() => setIsModalOpen(true)} className="group">
+                <Button onClick={() => setIsModalOpen(true)} className="group w-full sm:w-auto">
                     <Plus className="mr-2 h-4 w-4 transition-transform group-hover:rotate-90" />
                     New Goal
                 </Button>

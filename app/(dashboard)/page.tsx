@@ -93,32 +93,32 @@ export default function DashboardPage() {
     ];
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 md:space-y-8">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h2>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm md:text-base">
                         Welcome back! Here's your financial overview.
                     </p>
                 </div>
-                <Button onClick={() => setIsModalOpen(true)} className="group">
+                <Button onClick={() => setIsModalOpen(true)} className="group w-full sm:w-auto">
                     <Plus className="mr-2 h-4 w-4 transition-transform group-hover:rotate-90" />
                     Quick Add
                 </Button>
             </div>
 
             {/* Stat Cards */}
-            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 md:gap-5 grid-cols-2 lg:grid-cols-4">
                 {statCards.map((stat, i) => (
                     <Card key={i} className="relative overflow-hidden">
-                        <CardContent className="p-6">
+                        <CardContent className="p-4 md:p-6">
                             <div className="flex items-start justify-between">
-                                <div className="space-y-2">
-                                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                                <div className="space-y-1 md:space-y-2 min-w-0 flex-1">
+                                    <p className="text-xs md:text-sm font-medium text-slate-500 dark:text-slate-400 truncate">
                                         {stat.title}
                                     </p>
-                                    <p className={cn("text-2xl font-bold", stat.valueColor)}>
+                                    <p className={cn("text-lg md:text-2xl font-bold truncate", stat.valueColor)}>
                                         {stat.value}
                                     </p>
                                     {stat.link ? (
@@ -245,7 +245,7 @@ export default function DashboardPage() {
                                         </div>
                                         <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                                             <div
-                                                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500 ease-out"
+                                                className="h-full bg-indigo-500 transition-all duration-500 ease-out"
                                                 style={{ width: `${Math.min(100, (goal.currentAmount / goal.targetAmount) * 100)}%` }}
                                             />
                                         </div>

@@ -1,6 +1,20 @@
 {
   "name": "frugal",
   "version": "0.1.0",
+  "description": "Modern, privacy-focused personal finance app built with Next.js 16, TailwindCSS v4, and Firebase.",
+  "author": "Xander Labide",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/XJLabide/Frugal.git"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "firebase",
+    "tailwindcss",
+    "finance",
+    "budgeting"
+  ],
   "type": "module",
   "private": true,
   "scripts": {

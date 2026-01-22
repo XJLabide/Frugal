@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Sidebar } from "@/components/Sidebar";
+import { MobileNav } from "@/components/MobileNav";
 
 export default function DashboardLayout({
     children,
@@ -36,7 +37,8 @@ export default function DashboardLayout({
             <aside className="hidden md:block">
                 <Sidebar />
             </aside>
-            <main className="flex-1 overflow-y-auto p-8">{children}</main>
+            <main className="flex-1 overflow-y-auto p-4 pb-20 md:p-8 md:pb-8">{children}</main>
+            <MobileNav />
         </div>
     );
 }

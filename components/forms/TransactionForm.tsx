@@ -108,17 +108,7 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
                 />
             </div>
 
-            <div className="space-y-2">
-                <label className="text-sm font-medium">Amount</label>
-                <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    required
-                />
-            </div>
+
 
             <CategorySelector
                 type={type}

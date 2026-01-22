@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Trash2, ArrowUpRight, ArrowDownLeft, Search, ChevronLeft, ChevronRight, TrendingUp, TrendingDown, Wallet, Pencil } from "lucide-react";
+import { Plus, Trash2, ArrowUpRight, ArrowDownLeft, Search, TrendingUp, TrendingDown, Wallet, Pencil, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TransactionForm } from "@/components/forms/TransactionForm";
@@ -12,14 +12,21 @@ import { Input } from "@/components/ui/input";
 import { cn, CURRENCY_SYMBOL } from "@/lib/utils";
 import { format, parseISO, addMonths, subMonths } from "date-fns";
 import { Transaction } from "@/types";
+import { MonthYearPicker } from "@/components/ui/month-year-picker";
+import { useCategories } from "@/hooks/useCategories";
 
 export default function TransactionsPage() {
     const { transactions, loading, deleteTransaction } = useTransactions();
+    const { categories } = useCategories(); // Fetch categories for filter
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedMonth, setSelectedMonth] = useState(new Date());
+
+    // Filter states
+    const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
+    const [filterCategory, setFilterCategory] = useState<string>('all');
 
     const handleDelete = async () => {
         if (deleteId) {
@@ -37,12 +44,22 @@ export default function TransactionsPage() {
     }, [transactions, monthKey]);
 
     const filteredTransactions = useMemo(() => {
-        return monthTransactions.filter(t =>
-            t.categoryId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            t.note?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            t.location?.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [monthTransactions, searchQuery]);
+        return monthTransactions.filter(t => {
+            // Search filter
+            const matchesSearch =
+                t.categoryId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                t.note?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                t.location?.toLowerCase().includes(searchQuery.toLowerCase());
+
+            // Type filter
+            const matchesType = filterType === 'all' || t.type === filterType;
+
+            // Category filter
+            const matchesCategory = filterCategory === 'all' || t.categoryId === filterCategory;
+
+            return matchesSearch && matchesType && matchesCategory;
+        });
+    }, [monthTransactions, searchQuery, filterType, filterCategory]);
 
     // Calculate monthly summary
     const summary = useMemo(() => {
@@ -66,37 +83,98 @@ export default function TransactionsPage() {
         new Date(b).getTime() - new Date(a).getTime()
     );
 
-    const goToPrevMonth = () => setSelectedMonth(prev => subMonths(prev, 1));
-    const goToNextMonth = () => setSelectedMonth(prev => addMonths(prev, 1));
-
     return (
         <div className="space-y-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Transactions</h2>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Transactions</h2>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm md:text-base">
                         View and manage all your transactions
                     </p>
                 </div>
-                <Button onClick={() => setIsModalOpen(true)} className="group">
+                <Button onClick={() => setIsModalOpen(true)} className="group w-full sm:w-auto">
                     <Plus className="mr-2 h-4 w-4 transition-transform group-hover:rotate-90" />
                     Add Transaction
                 </Button>
             </div>
 
-            {/* Month Navigation */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            {/* Filters and Month Picker */}
+            <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl">
+                {/* Month Navigation */}
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={goToPrevMonth}>
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-10 w-10 shrink-0"
+                        onClick={() => setSelectedMonth(prev => subMonths(prev, 1))}
+                    >
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
-                    <div className="px-4 py-2 min-w-[180px] text-center font-semibold text-lg">
-                        {format(selectedMonth, "MMMM yyyy")}
-                    </div>
-                    <Button variant="outline" size="icon" onClick={goToNextMonth}>
+                    <MonthYearPicker
+                        date={selectedMonth}
+                        onChange={setSelectedMonth}
+                        className="w-[180px] shrink-0"
+                    />
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-10 w-10 shrink-0"
+                        onClick={() => setSelectedMonth(prev => addMonths(prev, 1))}
+                    >
                         <ChevronRight className="h-4 w-4" />
                     </Button>
+                </div>
+
+                {/* Filters */}
+                <div className="flex flex-wrap items-center gap-3">
+                    <div className="relative">
+                        <select
+                            className="h-10 pl-3 pr-9 rounded-lg border text-sm font-medium appearance-none
+                                bg-white dark:bg-slate-800 
+                                border-slate-300 dark:border-slate-600 
+                                text-slate-700 dark:text-slate-200
+                                focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500
+                                transition-colors cursor-pointer"
+                            value={filterType}
+                            onChange={(e) => setFilterType(e.target.value as any)}
+                        >
+                            <option value="all">All Types</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expenses</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                    </div>
+
+                    <div className="relative">
+                        <select
+                            className="h-10 pl-3 pr-9 rounded-lg border text-sm font-medium appearance-none
+                                bg-white dark:bg-slate-800 
+                                border-slate-300 dark:border-slate-600 
+                                text-slate-700 dark:text-slate-200
+                                focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500
+                                transition-colors cursor-pointer"
+                            value={filterCategory}
+                            onChange={(e) => setFilterCategory(e.target.value)}
+                        >
+                            <option value="all">All Categories</option>
+                            {categories.map(c => (
+                                <option key={c.id} value={c.name}>{c.name}</option>
+                            ))}
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                    </div>
+
+                    {/* Search */}
+                    <div className="relative flex-1 min-w-[150px] lg:w-48">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Input
+                            placeholder="Search..."
+                            className="pl-9 h-10"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -159,16 +237,7 @@ export default function TransactionsPage() {
                 </Card>
             </div>
 
-            {/* Search */}
-            <div className="relative max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <Input
-                    placeholder="Search transactions..."
-                    className="pl-11"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-            </div>
+
 
             {/* Transactions List */}
             <div className="space-y-6">
@@ -307,6 +376,6 @@ export default function TransactionsPage() {
                 message="Are you sure you want to delete this transaction? This action cannot be undone."
                 confirmText="Delete"
             />
-        </div>
+        </div >
     );
 }
