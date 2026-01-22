@@ -227,7 +227,7 @@ export default function AnalyticsPage() {
                                         cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }}
                                         contentStyle={{ borderRadius: '12px', borderColor: '#E2E8F0', padding: '12px' }}
                                         itemStyle={{ fontSize: '14px', fontWeight: 500 }}
-                                        formatter={(value: number) => [`${CURRENCY_SYMBOL}${(value || 0).toFixed(2)}`, '']}
+                                        formatter={(value: number | undefined) => [`${CURRENCY_SYMBOL}${(value ?? 0).toFixed(2)}`, '']}
                                     />
                                     <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
                                     <Bar dataKey="income" name="Income" fill="#22c55e" radius={[4, 4, 0, 0]} barSize={32} />
@@ -265,7 +265,7 @@ export default function AnalyticsPage() {
                                             ))}
                                         </Pie>
                                         <Tooltip
-                                            formatter={(value: number) => `${CURRENCY_SYMBOL}${(value || 0).toFixed(2)}`}
+                                            formatter={(value: number | undefined) => `${CURRENCY_SYMBOL}${(value ?? 0).toFixed(2)}`}
                                             contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                         />
                                     </PieChart>
