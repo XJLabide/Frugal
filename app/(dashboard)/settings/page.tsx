@@ -64,8 +64,8 @@ export default function SettingsPage() {
         <div className="space-y-6 max-w-3xl">
             {/* Header */}
             <div>
-                <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
-                <p className="text-slate-500 dark:text-slate-400 mt-1">
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Settings</h2>
+                <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm md:text-base">
                     Customize your Frugal experience
                 </p>
             </div>
@@ -141,47 +141,49 @@ export default function SettingsPage() {
                                 {recurringTransactions.map((rt) => (
                                     <div
                                         key={rt.id}
-                                        className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 p-4"
+                                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-4"
                                     >
-                                        <div className="flex flex-col gap-1">
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-semibold">{rt.name}</span>
-                                                <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 capitalize">
+                                        <div className="flex flex-col gap-1 min-w-0 flex-1">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <span className="font-semibold truncate">{rt.name}</span>
+                                                <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 capitalize shrink-0">
                                                     {rt.frequency}
                                                 </span>
                                             </div>
-                                            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                                            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 flex-wrap">
                                                 <span className="capitalize">{rt.categoryId}</span>
                                                 <span>•</span>
-                                                <span>Next: {format(parseISO(rt.nextDueDate), 'MMM d, yyyy')}</span>
+                                                <span className="whitespace-nowrap">Next: {format(parseISO(rt.nextDueDate), 'MMM d, yyyy')}</span>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 shrink-0">
                                             <span className={cn(
-                                                "font-bold",
+                                                "font-bold text-lg",
                                                 rt.type === 'income' ? "text-green-600 dark:text-green-400" : "text-slate-900 dark:text-white"
                                             )}>
                                                 {rt.type === 'income' ? '+' : ''}{CURRENCY_SYMBOL}{rt.amount.toFixed(2)}
                                             </span>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8 text-slate-400 hover:text-indigo-600"
-                                                onClick={() => {
-                                                    setEditingRecurring(rt);
-                                                    setIsRecurringModalOpen(true);
-                                                }}
-                                            >
-                                                <Pencil className="h-4 w-4" />
-                                            </Button>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8 text-slate-400 hover:text-red-600"
-                                                onClick={() => setDeleteRecurringId(rt.id)}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                            <div className="flex items-center gap-1">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-slate-400 hover:text-indigo-600"
+                                                    onClick={() => {
+                                                        setEditingRecurring(rt);
+                                                        setIsRecurringModalOpen(true);
+                                                    }}
+                                                >
+                                                    <Pencil className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-slate-400 hover:text-red-600"
+                                                    onClick={() => setDeleteRecurringId(rt.id)}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}

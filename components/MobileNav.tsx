@@ -8,14 +8,16 @@ import {
     Wallet,
     PieChart,
     Target,
+    BarChart3,
     Settings,
 } from "lucide-react";
 
 const navItems = [
-    { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "Home", href: "/", icon: LayoutDashboard },
     { name: "Transactions", href: "/transactions", icon: Wallet },
     { name: "Budgets", href: "/budgets", icon: PieChart },
     { name: "Goals", href: "/goals", icon: Target },
+    { name: "Analytics", href: "/analytics", icon: BarChart3 },
     { name: "Settings", href: "/settings", icon: Settings },
 ];
 

@@ -275,41 +275,41 @@ export default function TransactionsPage() {
                             <div className="space-y-2">
                                 {groupedTransactions[date].map((transaction) => (
                                     <Card key={transaction.id} className="group transition-all hover:shadow-lg">
-                                        <CardContent className="flex items-center justify-between p-4">
-                                            <div className="flex items-center space-x-4">
+                                        <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4">
+                                            <div className="flex items-center space-x-3 min-w-0">
                                                 <div
                                                     className={cn(
-                                                        "flex h-12 w-12 items-center justify-center rounded-xl transition-transform group-hover:scale-110",
+                                                        "flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl transition-transform group-hover:scale-110 shrink-0",
                                                         transaction.type === "income"
                                                             ? "bg-gradient-to-br from-green-500/20 to-emerald-500/20"
                                                             : "bg-gradient-to-br from-red-500/20 to-rose-500/20"
                                                     )}
                                                 >
                                                     {transaction.type === "income" ? (
-                                                        <ArrowUpRight className="h-6 w-6 text-green-600" />
+                                                        <ArrowUpRight className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
                                                     ) : (
-                                                        <ArrowDownLeft className="h-6 w-6 text-red-600" />
+                                                        <ArrowDownLeft className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
                                                     )}
                                                 </div>
-                                                <div>
-                                                    <p className="font-semibold">
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="font-semibold truncate">
                                                         {transaction.categoryId}
                                                     </p>
-                                                    <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 space-x-2">
-                                                        <span>{transaction.location || "—"}</span>
+                                                    <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 gap-1 sm:gap-2 flex-wrap">
+                                                        <span className="shrink-0">{transaction.location || "—"}</span>
                                                         {transaction.note && (
                                                             <>
                                                                 <span className="text-slate-300 dark:text-slate-600">•</span>
-                                                                <span className="truncate max-w-[150px]">{transaction.note}</span>
+                                                                <span className="truncate max-w-[100px] sm:max-w-[150px]">{transaction.note}</span>
                                                             </>
                                                         )}
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center space-x-4">
+                                            <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 pl-13 sm:pl-0">
                                                 <span
                                                     className={cn(
-                                                        "text-lg font-bold",
+                                                        "text-base sm:text-lg font-bold",
                                                         transaction.type === "income"
                                                             ? "text-green-600 dark:text-green-500"
                                                             : "text-red-600 dark:text-red-500"
@@ -317,7 +317,7 @@ export default function TransactionsPage() {
                                                 >
                                                     {transaction.type === "income" ? "+" : "-"}{CURRENCY_SYMBOL}{transaction.amount.toFixed(2)}
                                                 </span>
-                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
