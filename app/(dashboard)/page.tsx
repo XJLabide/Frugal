@@ -5,13 +5,15 @@ import { useCategories } from "@/hooks/useCategories";
 import { useBudgets } from "@/hooks/useBudgets";
 import { useRecurringTransactions } from "@/hooks/useRecurringTransactions";
 import { useGoals } from "@/hooks/useGoals";
+import { useBillReminders } from "@/hooks/useBillReminders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, ArrowUpRight, ArrowDownLeft, Wallet, TrendingUp, TrendingDown, Target, Calendar } from "lucide-react";
+import { Plus, ArrowUpRight, ArrowDownLeft, Wallet, TrendingUp, TrendingDown, Target, Calendar, Bell, BellRing, AlertTriangle } from "lucide-react";
 import { ExpensePieChart } from "@/components/charts/ExpensePieChart";
 import { format, startOfMonth, endOfMonth, isWithinInterval, parseISO } from "date-fns";
 import { Modal } from "@/components/ui/modal";
 import { TransactionForm } from "@/components/forms/TransactionForm";
+import { BillReminderMonitor } from "@/components/BillReminderMonitor";
 import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -23,6 +25,7 @@ export default function DashboardPage() {
     const { overallBudget } = useBudgets();
     const { goals } = useGoals();
     const { recurringTransactions } = useRecurringTransactions();
+    const { upcomingBills } = useBillReminders();
     const { currencySymbol, formatCurrency } = useCurrency();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -258,48 +261,114 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
 
-                {/* Upcoming Recurring */}
+                {/* Upcoming Bills */}
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="flex items-center gap-2">
                             <Calendar className="h-5 w-5 text-amber-500" />
                             Upcoming Bills
+                            {upcomingBills.filter(b => b.daysUntilDue <= 3).length > 0 && (
+                                <span className="flex items-center justify-center h-5 w-5 rounded-full bg-red-500 text-white text-xs font-bold">
+                                    {upcomingBills.filter(b => b.daysUntilDue <= 3).length}
+                                </span>
+                            )}
                         </CardTitle>
                         <Link href="/transactions?tab=recurring" className="text-sm text-indigo-500 hover:underline">
                             Manage
                         </Link>
                     </CardHeader>
-                    <CardContent className="max-h-[240px] overflow-y-auto">
+                    <CardContent className="max-h-[280px] overflow-y-auto">
                         {recurringTransactions.length === 0 ? (
                             <div className="text-center py-6 text-slate-400">
                                 <p className="text-sm">No recurring bills set.</p>
                             </div>
+                        ) : upcomingBills.length === 0 ? (
+                            <div className="text-center py-6 text-slate-400">
+                                <p className="text-sm">No bills due soon.</p>
+                            </div>
                         ) : (
                             <div className="space-y-3">
-                                {recurringTransactions
-                                    .sort((a: any, b: any) => new Date(a.nextDueDate).getTime() - new Date(b.nextDueDate).getTime())
-                                    .slice(0, 3)
-                                    .map((rt: any) => (
-                                        <div key={rt.id} className="flex items-center justify-between p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
-                                            <div className="flex items-center gap-4">
-                                                <div className="flex flex-col items-center justify-center w-12 text-slate-500 dark:text-slate-400">
-                                                    <span className="text-[10px] uppercase font-bold tracking-wider">{format(parseISO(rt.nextDueDate), 'MMM')}</span>
-                                                    <span className="text-xl font-bold text-slate-700 dark:text-slate-200 leading-none">{format(parseISO(rt.nextDueDate), 'd')}</span>
+                                {upcomingBills
+                                    .slice(0, 5)
+                                    .map((bill) => {
+                                        const rt = bill.recurringTransaction;
+                                        const isUrgent = bill.daysUntilDue <= 3;
+                                        const isDueToday = bill.daysUntilDue === 0;
+                                        const isDueTomorrow = bill.daysUntilDue === 1;
+
+                                        return (
+                                            <div
+                                                key={rt.id}
+                                                className={cn(
+                                                    "flex items-center justify-between p-3 rounded-xl border transition-colors",
+                                                    isUrgent
+                                                        ? "border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20"
+                                                        : "border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50"
+                                                )}
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    {/* Date indicator with urgency styling */}
+                                                    <div className={cn(
+                                                        "flex flex-col items-center justify-center w-12",
+                                                        isUrgent
+                                                            ? "text-amber-600 dark:text-amber-400"
+                                                            : "text-slate-500 dark:text-slate-400"
+                                                    )}>
+                                                        <span className="text-[10px] uppercase font-bold tracking-wider">
+                                                            {format(parseISO(rt.nextDueDate), 'MMM')}
+                                                        </span>
+                                                        <span className={cn(
+                                                            "text-xl font-bold leading-none",
+                                                            isUrgent
+                                                                ? "text-amber-700 dark:text-amber-300"
+                                                                : "text-slate-700 dark:text-slate-200"
+                                                        )}>
+                                                            {format(parseISO(rt.nextDueDate), 'd')}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2">
+                                                            <p className="text-sm font-medium truncate">{rt.name}</p>
+                                                            {/* Reminder indicator icons */}
+                                                            {isDueToday && (
+                                                                <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0" />
+                                                            )}
+                                                            {isDueTomorrow && (
+                                                                <BellRing className="h-4 w-4 text-amber-500 flex-shrink-0 animate-pulse" />
+                                                            )}
+                                                            {bill.reminderStatus === "reminded" && !isDueToday && !isDueTomorrow && (
+                                                                <Bell className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
+                                                            )}
+                                                        </div>
+                                                        <p className={cn(
+                                                            "text-xs",
+                                                            isUrgent
+                                                                ? "text-amber-600 dark:text-amber-400 font-medium"
+                                                                : "text-slate-500"
+                                                        )}>
+                                                            {isDueToday
+                                                                ? "Due today!"
+                                                                : isDueTomorrow
+                                                                ? "Due tomorrow"
+                                                                : `Due in ${bill.daysUntilDue} days`}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="text-sm font-medium">{rt.name}</p>
-                                                    <p className="text-xs text-slate-500">{rt.frequency}</p>
-                                                </div>
+                                                <p className={cn(
+                                                    "font-semibold text-sm flex-shrink-0",
+                                                    isUrgent && "text-amber-700 dark:text-amber-300"
+                                                )}>
+                                                    {formatCurrency(rt.amount)}
+                                                </p>
                                             </div>
-                                            <p className="font-semibold text-sm">
-                                                {formatCurrency(rt.amount)}
-                                            </p>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                             </div>
                         )}
                     </CardContent>
                 </Card>
+                {/* Bill Reminder Monitor - runs check on dashboard load */}
+                <BillReminderMonitor />
             </div>
 
             <Modal
