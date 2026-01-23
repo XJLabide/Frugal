@@ -10,13 +10,15 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Modal } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { RecurringTransactionForm } from "@/components/forms/RecurringTransactionForm";
-import { Trash2, Plus, Moon, Sun, Palette, Tags, Repeat, CalendarClock, Pencil } from "lucide-react";
-import { cn, CURRENCY_SYMBOL } from "@/lib/utils";
+import { Trash2, Plus, Moon, Sun, Palette, Tags, Repeat, CalendarClock, Pencil, Coins } from "lucide-react";
+import { cn, CURRENCIES } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { format, parseISO } from "date-fns";
 
 export default function SettingsPage() {
     const { categories, addCategory, deleteCategory, seedDefaults, hasCategories, loading } = useCategories();
     const { recurringTransactions, deleteRecurringTransaction, loading: recurringLoading } = useRecurringTransactions();
+    const { currency, currencySymbol, setCurrency, loading: currencyLoading } = useCurrency();
     const [newCatName, setNewCatName] = useState("");
     const [newCatType, setNewCatType] = useState<"income" | "expense">("expense");
     const [isDark, setIsDark] = useState(false);
@@ -110,6 +112,43 @@ export default function SettingsPage() {
                 </CardContent>
             </Card>
 
+            {/* Currency */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Coins className="h-5 w-5 text-indigo-500" />
+                        Currency
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-1">
+                            <p className="font-medium">Display Currency</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                                Choose your preferred currency for displaying amounts
+                            </p>
+                        </div>
+                        <select
+                            className="h-11 w-40 rounded-xl border-2 px-3 py-2 text-sm font-medium transition-all focus:ring-2 focus:ring-indigo-500/20"
+                            style={{
+                                backgroundColor: 'var(--input-bg)',
+                                borderColor: 'var(--input-border)',
+                                color: 'var(--input-text)',
+                            }}
+                            value={currency}
+                            onChange={(e) => setCurrency(e.target.value)}
+                            disabled={currencyLoading}
+                        >
+                            {Object.entries(CURRENCIES).map(([code, { symbol, name }]) => (
+                                <option key={code} value={code}>
+                                    {symbol} {code} - {name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </CardContent>
+            </Card>
+
             {/* Recurring Transactions */}
             <Card>
                 <CardHeader>
@@ -161,7 +200,7 @@ export default function SettingsPage() {
                                                 "font-bold text-lg",
                                                 rt.type === 'income' ? "text-green-600 dark:text-green-400" : "text-slate-900 dark:text-white"
                                             )}>
-                                                {rt.type === 'income' ? '+' : ''}{CURRENCY_SYMBOL}{rt.amount.toFixed(2)}
+                                                {rt.type === 'income' ? '+' : ''}{currencySymbol}{rt.amount.toFixed(2)}
                                             </span>
                                             <div className="flex items-center gap-1">
                                                 <Button

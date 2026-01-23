@@ -2,7 +2,7 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Transaction, Category } from "@/types";
-import { CURRENCY_SYMBOL } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface ExpensePieChartProps {
     transactions: Transaction[];
@@ -10,6 +10,8 @@ interface ExpensePieChartProps {
 }
 
 export function ExpensePieChart({ transactions, categories }: ExpensePieChartProps) {
+    const { currencySymbol } = useCurrency();
+
     // Aggregate expenses by category
     const dataMap: Record<string, number> = {};
 
@@ -35,7 +37,7 @@ export function ExpensePieChart({ transactions, categories }: ExpensePieChartPro
                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2 rounded shadow-sm">
                     <p className="text-sm font-medium">{payload[0].name}</p>
                     <p className="text-sm text-slate-500">
-                        {CURRENCY_SYMBOL}{payload[0].value.toFixed(2)}
+                        {currencySymbol}{payload[0].value.toFixed(2)}
                     </p>
                 </div>
             );

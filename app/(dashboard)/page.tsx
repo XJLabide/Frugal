@@ -14,7 +14,8 @@ import { Modal } from "@/components/ui/modal";
 import { TransactionForm } from "@/components/forms/TransactionForm";
 import { useState } from "react";
 import Link from "next/link";
-import { cn, formatCurrency, CURRENCY_SYMBOL } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 export default function DashboardPage() {
     const { transactions, loading: transactionsLoading } = useTransactions();
@@ -22,6 +23,7 @@ export default function DashboardPage() {
     const { overallBudget } = useBudgets();
     const { goals } = useGoals();
     const { recurringTransactions } = useRecurringTransactions();
+    const { currencySymbol, formatCurrency } = useCurrency();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const now = new Date();
@@ -59,7 +61,7 @@ export default function DashboardPage() {
     const statCards = [
         {
             title: "Total Balance",
-            value: `${CURRENCY_SYMBOL}${balance.toFixed(2)}`,
+            value: `${currencySymbol}${balance.toFixed(2)}`,
             subtitle: "All time",
             icon: Wallet,
             iconBg: "from-indigo-500 to-purple-500",
@@ -67,7 +69,7 @@ export default function DashboardPage() {
         },
         {
             title: "Income",
-            value: `+${CURRENCY_SYMBOL}${totalIncome.toFixed(2)}`,
+            value: `+${currencySymbol}${totalIncome.toFixed(2)}`,
             subtitle: format(now, 'MMMM yyyy'),
             icon: TrendingUp,
             iconBg: "from-green-500 to-emerald-500",
@@ -75,7 +77,7 @@ export default function DashboardPage() {
         },
         {
             title: "Expenses",
-            value: `-${CURRENCY_SYMBOL}${totalExpenses.toFixed(2)}`,
+            value: `-${currencySymbol}${totalExpenses.toFixed(2)}`,
             subtitle: format(now, 'MMMM yyyy'),
             icon: TrendingDown,
             iconBg: "from-red-500 to-rose-500",
@@ -84,7 +86,7 @@ export default function DashboardPage() {
         {
             title: "Budget Left",
             value: overallBudget ? `${Math.round(budgetRemainingPercent)}%` : "—",
-            subtitle: overallBudget ? `${CURRENCY_SYMBOL}${budgetRemainingAmt.toFixed(0)} of ${CURRENCY_SYMBOL}${budgetTotal}` : "No budget set",
+            subtitle: overallBudget ? `${currencySymbol}${budgetRemainingAmt.toFixed(0)} of ${currencySymbol}${budgetTotal}` : "No budget set",
             icon: Target,
             iconBg: "from-amber-500 to-orange-500",
             valueColor: "",
@@ -205,7 +207,7 @@ export default function DashboardPage() {
                                             "font-semibold text-sm",
                                             t.type === 'income' ? "text-green-600" : "text-red-600"
                                         )}>
-                                            {t.type === 'income' ? "+" : "-"}{CURRENCY_SYMBOL}{t.amount.toFixed(2)}
+                                            {t.type === 'income' ? "+" : "-"}{currencySymbol}{t.amount.toFixed(2)}
                                         </div>
                                     </div>
                                 ))

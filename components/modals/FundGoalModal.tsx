@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { Goal } from "@/types";
-import { CURRENCY_SYMBOL, formatCurrency } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { Target, ArrowRight, Wallet } from "lucide-react";
 import { format } from "date-fns";
 
@@ -21,6 +21,7 @@ interface FundGoalModalProps {
 export function FundGoalModal({ isOpen, onClose, goal, availableBalance }: FundGoalModalProps) {
     const { addToGoal } = useGoals();
     const { addTransaction } = useTransactions();
+    const { currencySymbol, formatCurrency } = useCurrency();
     const [amount, setAmount] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -114,7 +115,7 @@ export function FundGoalModal({ isOpen, onClose, goal, availableBalance }: FundG
                         size="sm"
                         onClick={() => setAmount(Math.min(100, availableBalance).toString())}
                     >
-                        {CURRENCY_SYMBOL}100
+                        {currencySymbol}100
                     </Button>
                     <Button
                         type="button"
@@ -122,7 +123,7 @@ export function FundGoalModal({ isOpen, onClose, goal, availableBalance }: FundG
                         size="sm"
                         onClick={() => setAmount(Math.min(500, availableBalance).toString())}
                     >
-                        {CURRENCY_SYMBOL}500
+                        {currencySymbol}500
                     </Button>
                     <Button
                         type="button"

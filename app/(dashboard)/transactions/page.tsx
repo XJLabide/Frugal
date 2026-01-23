@@ -10,7 +10,8 @@ import { Modal } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TransactionForm } from "@/components/forms/TransactionForm";
 import { Input } from "@/components/ui/input";
-import { cn, CURRENCY_SYMBOL } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { format, parseISO, addMonths, subMonths } from "date-fns";
 import { Transaction } from "@/types";
 import { MonthYearPicker } from "@/components/ui/month-year-picker";
@@ -20,6 +21,7 @@ export default function TransactionsPage() {
     const { transactions, loading, deleteTransaction } = useTransactions();
     const { categories } = useCategories(); // Fetch categories for filter
     const { tags } = useTags(); // Fetch tags for displaying chips
+    const { currencySymbol } = useCurrency();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
     const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -187,7 +189,7 @@ export default function TransactionsPage() {
                         <div>
                             <p className="text-sm text-green-600 dark:text-green-400 font-medium">Income</p>
                             <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                                {CURRENCY_SYMBOL}{summary.income.toFixed(2)}
+                                {currencySymbol}{summary.income.toFixed(2)}
                             </p>
                         </div>
                         <div className="p-3 rounded-xl bg-green-500/20">
@@ -200,7 +202,7 @@ export default function TransactionsPage() {
                         <div>
                             <p className="text-sm text-red-600 dark:text-red-400 font-medium">Expenses</p>
                             <p className="text-2xl font-bold text-red-700 dark:text-red-300">
-                                {CURRENCY_SYMBOL}{summary.expenses.toFixed(2)}
+                                {currencySymbol}{summary.expenses.toFixed(2)}
                             </p>
                         </div>
                         <div className="p-3 rounded-xl bg-red-500/20">
@@ -226,7 +228,7 @@ export default function TransactionsPage() {
                                 "text-2xl font-bold",
                                 summary.net >= 0 ? "text-indigo-700 dark:text-indigo-300" : "text-amber-700 dark:text-amber-300"
                             )}>
-                                {summary.net >= 0 ? "+" : "-"}{CURRENCY_SYMBOL}{Math.abs(summary.net).toFixed(2)}
+                                {summary.net >= 0 ? "+" : "-"}{currencySymbol}{Math.abs(summary.net).toFixed(2)}
                             </p>
                         </div>
                         <div className={cn(
@@ -339,7 +341,7 @@ export default function TransactionsPage() {
                                                             : "text-red-600 dark:text-red-500"
                                                     )}
                                                 >
-                                                    {transaction.type === "income" ? "+" : "-"}{CURRENCY_SYMBOL}{transaction.amount.toFixed(2)}
+                                                    {transaction.type === "income" ? "+" : "-"}{currencySymbol}{transaction.amount.toFixed(2)}
                                                 </span>
                                                 <div className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                                     <Button

@@ -12,11 +12,13 @@ import { Modal } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { BudgetForm } from "@/components/forms/BudgetForm";
 import { format, addMonths, subMonths } from "date-fns";
-import { cn, CURRENCY_SYMBOL } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { Budget } from "@/types";
 import { MonthYearPicker } from "@/components/ui/month-year-picker";
 
 export default function BudgetsPage() {
+    const { currencySymbol } = useCurrency();
     const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
     const selectedMonthKey = format(selectedMonth, "yyyy-MM");
     const {
@@ -234,7 +236,7 @@ export default function BudgetsPage() {
                                     <div className="h-9 w-32 bg-white/20 rounded animate-pulse mt-1" />
                                 ) : (
                                     <p className="text-3xl font-bold">
-                                        {overallAmount > 0 ? `${CURRENCY_SYMBOL}${overallAmount.toFixed(2)}` : "Not Set"}
+                                        {overallAmount > 0 ? `${currencySymbol}${overallAmount.toFixed(2)}` : "Not Set"}
                                     </p>
                                 )}
                             </div>
@@ -267,7 +269,7 @@ export default function BudgetsPage() {
                             <div className="space-y-2 mb-4">
                                 <div className="flex justify-between text-sm">
                                     <span className="opacity-80">Spent in {format(selectedMonth, "MMMM yyyy")}</span>
-                                    <span className="font-medium">{CURRENCY_SYMBOL}{totalSpending.toFixed(2)} ({Math.round(overallSpentPercentage)}%)</span>
+                                    <span className="font-medium">{currencySymbol}{totalSpending.toFixed(2)} ({Math.round(overallSpentPercentage)}%)</span>
                                 </div>
                                 <div className="h-2 bg-white/20 rounded-full overflow-hidden">
                                     <div
@@ -285,7 +287,7 @@ export default function BudgetsPage() {
                                 <div className="flex justify-between text-sm">
                                     <span className="opacity-80">Allocated to categories</span>
                                     <span className={cn("font-medium", isOverAllocated && "text-amber-200")}>
-                                        {CURRENCY_SYMBOL}{totalAllocated.toFixed(2)} ({Math.round(allocationPercentage)}%)
+                                        {currencySymbol}{totalAllocated.toFixed(2)} ({Math.round(allocationPercentage)}%)
                                     </span>
                                 </div>
                                 <div className="h-2 bg-white/20 rounded-full overflow-hidden">
@@ -300,7 +302,7 @@ export default function BudgetsPage() {
                                 {isOverAllocated && (
                                     <p className="text-amber-200 text-sm flex items-center gap-1">
                                         <AlertTriangle className="h-4 w-4" />
-                                        Over-allocated by {CURRENCY_SYMBOL}{(totalAllocated - overallAmount).toFixed(2)}
+                                        Over-allocated by {currencySymbol}{(totalAllocated - overallAmount).toFixed(2)}
                                     </p>
                                 )}
                             </div>
@@ -376,8 +378,8 @@ export default function BudgetsPage() {
 
                                     <div className="space-y-2">
                                         <div className="flex justify-between items-end">
-                                            <span className="text-xl font-bold">{CURRENCY_SYMBOL}{spent.toFixed(2)}</span>
-                                            <span className="text-sm text-slate-500">of {CURRENCY_SYMBOL}{budget.amount.toFixed(2)}</span>
+                                            <span className="text-xl font-bold">{currencySymbol}{spent.toFixed(2)}</span>
+                                            <span className="text-sm text-slate-500">of {currencySymbol}{budget.amount.toFixed(2)}</span>
                                         </div>
 
                                         <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -416,7 +418,7 @@ export default function BudgetsPage() {
                                                     return (
                                                         <div key={sub} className="flex justify-between text-xs">
                                                             <span className="text-slate-600 dark:text-slate-400">{sub}</span>
-                                                            <span className="font-medium">{CURRENCY_SYMBOL}{subSpent.toFixed(2)}</span>
+                                                            <span className="font-medium">{currencySymbol}{subSpent.toFixed(2)}</span>
                                                         </div>
                                                     );
                                                 })}
@@ -439,7 +441,7 @@ export default function BudgetsPage() {
                             <h4 className="font-medium mb-1">No category budgets</h4>
                             <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
                                 {overallAmount > 0
-                                    ? `Allocate your ${CURRENCY_SYMBOL}${overallAmount.toFixed(2)} limit to specific categories`
+                                    ? `Allocate your ${currencySymbol}${overallAmount.toFixed(2)} limit to specific categories`
                                     : "Set an overall limit first, then allocate to categories"
                                 }
                             </p>
@@ -472,7 +474,7 @@ export default function BudgetsPage() {
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Budget Limit</label>
                         <div className="relative">
-                            <span className="absolute left-3 top-2.5 text-slate-500 font-bold">{CURRENCY_SYMBOL}</span>
+                            <span className="absolute left-3 top-2.5 text-slate-500 font-bold">{currencySymbol}</span>
                             <Input
                                 type="number"
                                 step="0.01"
