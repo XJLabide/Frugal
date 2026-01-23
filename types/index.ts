@@ -32,6 +32,7 @@ export interface Transaction {
     createdAt?: number; // Timestamp
     subCategory?: string; // Selected subcategory
     tags?: string[]; // Tag IDs associated with this transaction
+    accountId?: string; // Account ID for future account-based tracking
 }
 
 export interface Tag {
@@ -99,4 +100,18 @@ export interface Notification {
     read: boolean;
     createdAt: number; // Timestamp
     data?: Record<string, unknown>; // Additional payload (e.g., categoryId, goalId)
+}
+
+export type AccountType = 'bank' | 'ewallet' | 'cash' | 'credit' | 'other';
+
+export interface Account {
+    id: string;
+    userId: string;
+    name: string;
+    type: AccountType;
+    startingBalance: number;
+    icon?: string; // Icon name from lucide-react
+    color?: string; // Hex code or tailwind class
+    isDefault?: boolean;
+    createdAt?: number; // Timestamp
 }
