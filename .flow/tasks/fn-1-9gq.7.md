@@ -7,9 +7,8 @@ TBD
 - [ ] TBD
 
 ## Done summary
-TBD
-
+Added Notification types (NotificationType, Notification) to types/index.ts and created useNotifications hook with Firestore real-time subscription at users/{uid}/notifications. Hook provides addNotification, markAsRead, markAllAsRead, deleteNotification methods and computed unreadCount.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 6450bc918581283b0efc9f792387a5ce256adfc8
+- Tests: npx tsc --noEmit
 - PRs:
