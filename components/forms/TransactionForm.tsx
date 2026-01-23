@@ -79,12 +79,13 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            {/* Type Toggle - More compact */}
             <div className="flex space-x-2">
                 <Button
                     type="button"
                     variant={type === "expense" ? "destructive" : "outline"}
-                    className="w-full"
+                    className="w-full h-9 sm:h-10 text-sm"
                     onClick={() => setType("expense")}
                 >
                     Expense
@@ -92,26 +93,26 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
                 <Button
                     type="button"
                     variant={type === "income" ? "default" : "outline"}
-                    className="w-full"
+                    className="w-full h-9 sm:h-10 text-sm"
                     onClick={() => setType("income")}
                 >
                     Income
                 </Button>
             </div>
 
-            <div className="space-y-2">
-                <label className="text-sm font-medium">Amount</label>
+            {/* Amount - Prominent field */}
+            <div className="space-y-1.5">
+                <label className="text-xs sm:text-sm font-medium">Amount</label>
                 <Input
                     type="number"
                     step="0.01"
                     placeholder="0.00"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
+                    className="h-10 sm:h-11 text-base"
                     required
                 />
             </div>
-
-
 
             <CategorySelector
                 type={type}
@@ -121,31 +122,37 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
                 onSubCategoryChange={setSubCategory}
             />
 
-            <div className="space-y-2">
-                <label className="text-sm font-medium">Date</label>
-                <Input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    required
-                />
+            {/* Date and Location - Side by side on mobile to save space */}
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                <div className="space-y-1.5">
+                    <label className="text-xs sm:text-sm font-medium">Date</label>
+                    <Input
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        className="h-9 sm:h-11 text-sm"
+                        required
+                    />
+                </div>
+                <div className="space-y-1.5">
+                    <label className="text-xs sm:text-sm font-medium">Location</label>
+                    <Input
+                        placeholder="GCash, etc."
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        className="h-9 sm:h-11 text-sm"
+                    />
+                </div>
             </div>
 
-            <div className="space-y-2">
-                <label className="text-sm font-medium">Location / Account</label>
+            {/* Note - Compact */}
+            <div className="space-y-1.5">
+                <label className="text-xs sm:text-sm font-medium">Note <span className="text-slate-400 font-normal">(optional)</span></label>
                 <Input
-                    placeholder="e.g. Starbucks, GCash"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                />
-            </div>
-
-            <div className="space-y-2">
-                <label className="text-sm font-medium">Note</label>
-                <Input
-                    placeholder="Optional note"
+                    placeholder="Add a note..."
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
+                    className="h-9 sm:h-11 text-sm"
                 />
             </div>
 
@@ -154,7 +161,7 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
                 onTagsChange={setSelectedTags}
             />
 
-            <Button type="submit" className="w-full" disabled={isSubmitting || !category}>
+            <Button type="submit" className="w-full h-10 sm:h-11 mt-2" disabled={isSubmitting || !category}>
                 {isSubmitting ? (editingTransaction ? "Saving..." : "Adding...") : (editingTransaction ? "Save Changes" : "Add Transaction")}
             </Button>
         </form>

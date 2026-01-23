@@ -50,109 +50,98 @@ export function CategorySelector({
     };
 
     return (
-        <div className="space-y-4">
-            {/* Category Select */}
-            <div className="space-y-2">
-                <label className="text-sm font-medium">Category</label>
-                {loading ? (
-                    <p className="text-sm text-slate-500">Loading categories...</p>
-                ) : !hasCategories ? (
-                    <div className="text-sm text-amber-600 bg-amber-50 p-2 rounded">
-                        No categories found. <button type="button" onClick={() => seedDefaults()} className="underline font-bold hover:text-amber-800">Add Defaults</button>
-                    </div>
-                ) : (
-                    <select
-                        className="flex h-11 w-full rounded-xl border-2 px-3 py-2 text-sm transition-all focus:ring-2 focus:ring-indigo-500/20"
-                        style={{
-                            backgroundColor: 'var(--input-bg)',
-                            borderColor: 'var(--input-border)',
-                            color: 'var(--input-text)',
-                        }}
-                        value={selectedCategory}
-                        onChange={(e) => {
-                            onCategoryChange(e.target.value);
-                            // Subcategory reset logic should be handled by parent or here if we want to be strict
-                            // But usually onCategoryChange implies potential subcategory invalidation
-                        }}
-                        required
-                    >
-                        <option value="">Select Category</option>
-                        {filteredCategories.map((cat) => (
-                            <option key={cat.id} value={cat.name}>
-                                {cat.name}
-                            </option>
-                        ))}
-                    </select>
-                )}
-            </div>
+        <div className="space-y-3 sm:space-y-4">
+            {/* Category and Subcategory - Side by side on mobile */}
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                {/* Category Select */}
+                <div className="space-y-1.5">
+                    <label className="text-xs sm:text-sm font-medium">Category</label>
+                    {loading ? (
+                        <p className="text-xs text-slate-500">Loading...</p>
+                    ) : !hasCategories ? (
+                        <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                            <button type="button" onClick={() => seedDefaults()} className="underline font-bold hover:text-amber-800">Add Defaults</button>
+                        </div>
+                    ) : (
+                        <select
+                            className="flex h-9 sm:h-11 w-full rounded-xl border-2 px-2 sm:px-3 py-1.5 text-sm transition-all focus:ring-2 focus:ring-indigo-500/20"
+                            style={{
+                                backgroundColor: 'var(--input-bg)',
+                                borderColor: 'var(--input-border)',
+                                color: 'var(--input-text)',
+                            }}
+                            value={selectedCategory}
+                            onChange={(e) => {
+                                onCategoryChange(e.target.value);
+                            }}
+                            required
+                        >
+                            <option value="">Select...</option>
+                            {filteredCategories.map((cat) => (
+                                <option key={cat.id} value={cat.name}>
+                                    {cat.name}
+                                </option>
+                            ))}
+                        </select>
+                    )}
+                </div>
 
-            {/* Subcategory Select (Conditional) */}
-            {selectedCategory && (
-                <div className="space-y-2">
-                    <label className="text-sm font-medium">Subcategory</label>
-
+                {/* Subcategory Select */}
+                <div className="space-y-1.5">
+                    <label className="text-xs sm:text-sm font-medium">Subcategory</label>
                     {isAddingSub ? (
-                        <div className="flex gap-2">
+                        <div className="flex gap-1">
                             <Input
-                                placeholder="New subcategory name"
+                                placeholder="Name"
                                 value={newSubName}
                                 onChange={(e) => setNewSubName(e.target.value)}
-                                className="h-10 text-sm"
+                                className="h-9 sm:h-11 text-sm"
                                 autoFocus
                             />
                             <Button
                                 type="button"
                                 size="sm"
+                                className="h-9 sm:h-11 px-2"
                                 onClick={handleSaveNewSub}
                                 disabled={!newSubName.trim()}
                             >
-                                Save
-                            </Button>
-                            <Button
-                                type="button"
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => setIsAddingSub(false)}
-                            >
-                                Cancel
+                                OK
                             </Button>
                         </div>
                     ) : (
-                        <div className="flex gap-2">
-                            <select
-                                className="flex h-11 w-full rounded-xl border-2 px-3 py-2 text-sm transition-all focus:ring-2 focus:ring-indigo-500/20"
-                                style={{
-                                    backgroundColor: 'var(--input-bg)',
-                                    borderColor: 'var(--input-border)',
-                                    color: 'var(--input-text)',
-                                }}
-                                value={selectedSubCategory || ""}
-                                onChange={(e) => {
-                                    if (e.target.value === "ADD_NEW") {
-                                        setIsAddingSub(true);
-                                    } else {
-                                        onSubCategoryChange(e.target.value);
-                                    }
-                                }}
-                            >
-                                <option value="">None</option>
-                                {/* Optimistically show the selected subcategory if it's not in the loaded list yet */}
-                                {availableSubCategories.includes(selectedSubCategory || "")
-                                    ? null
-                                    : selectedSubCategory && <option value={selectedSubCategory}>{selectedSubCategory}</option>
+                        <select
+                            className="flex h-9 sm:h-11 w-full rounded-xl border-2 px-2 sm:px-3 py-1.5 text-sm transition-all focus:ring-2 focus:ring-indigo-500/20"
+                            style={{
+                                backgroundColor: 'var(--input-bg)',
+                                borderColor: 'var(--input-border)',
+                                color: 'var(--input-text)',
+                            }}
+                            value={selectedSubCategory || ""}
+                            onChange={(e) => {
+                                if (e.target.value === "ADD_NEW") {
+                                    setIsAddingSub(true);
+                                } else {
+                                    onSubCategoryChange(e.target.value);
                                 }
-                                {availableSubCategories.map((sub) => (
-                                    <option key={sub} value={sub}>
-                                        {sub}
-                                    </option>
-                                ))}
-                                <option disabled>──────────</option>
-                                <option value="ADD_NEW">+ Add New Subcategory</option>
-                            </select>
-                        </div>
+                            }}
+                            disabled={!selectedCategory}
+                        >
+                            <option value="">None</option>
+                            {availableSubCategories.includes(selectedSubCategory || "")
+                                ? null
+                                : selectedSubCategory && <option value={selectedSubCategory}>{selectedSubCategory}</option>
+                            }
+                            {availableSubCategories.map((sub) => (
+                                <option key={sub} value={sub}>
+                                    {sub}
+                                </option>
+                            ))}
+                            <option disabled>────────</option>
+                            <option value="ADD_NEW">+ Add New</option>
+                        </select>
                     )}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
