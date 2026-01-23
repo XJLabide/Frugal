@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
     collection,
     query,
@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Account, AccountType } from "@/types";
+import { Account, AccountType, Transaction } from "@/types";
 
 const DEFAULT_ACCOUNTS: Omit<Account, "id" | "userId" | "createdAt">[] = [
     { name: "Cash", type: "cash", startingBalance: 0, icon: "Wallet", color: "#22c55e", isDefault: true },
@@ -22,8 +22,10 @@ const DEFAULT_ACCOUNTS: Omit<Account, "id" | "userId" | "createdAt">[] = [
 export function useAccounts() {
     const { user } = useAuthStore();
     const [accounts, setAccounts] = useState<Account[]>([]);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // Subscribe to accounts
     useEffect(() => {
         if (!user) {
             setAccounts([]);
@@ -62,6 +64,61 @@ export function useAccounts() {
 
         return () => unsubscribe();
     }, [user]);
+
+    // Subscribe to transactions for balance calculation
+    useEffect(() => {
+        if (!user) {
+            setTransactions([]);
+            return;
+        }
+
+        const q = query(
+            collection(db, "users", user.uid, "transactions")
+        );
+
+        const unsubscribe = onSnapshot(q,
+            (snapshot) => {
+                const data = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })) as Transaction[];
+                setTransactions(data);
+            },
+            (error) => {
+                console.error("Error fetching transactions for balance calculation:", error);
+            }
+        );
+
+        return () => unsubscribe();
+    }, [user]);
+
+    // Calculate balances: Record<accountId, number>
+    // Balance = startingBalance + income(accountId) - expenses(accountId)
+    const balances = useMemo(() => {
+        const result: Record<string, number> = {};
+
+        accounts.forEach(account => {
+            let balance = account.startingBalance || 0;
+
+            // Filter transactions for this account
+            const accountTransactions = transactions.filter(
+                t => t.accountId === account.id
+            );
+
+            // Add income, subtract expenses
+            accountTransactions.forEach(t => {
+                if (t.type === 'income') {
+                    balance += t.amount;
+                } else if (t.type === 'expense') {
+                    balance -= t.amount;
+                }
+            });
+
+            result[account.id] = balance;
+        });
+
+        return result;
+    }, [accounts, transactions]);
 
     const addAccount = async (account: Omit<Account, "id" | "userId" | "createdAt">) => {
         if (!user) return;
@@ -117,15 +174,28 @@ export function useAccounts() {
         return accounts.find(account => account.isDefault) || accounts[0];
     };
 
+    // Get balance for a specific account
+    const getAccountBalance = (accountId: string): number => {
+        return balances[accountId] ?? 0;
+    };
+
+    // Get total balance across all accounts
+    const getTotalBalance = (): number => {
+        return Object.values(balances).reduce((sum, balance) => sum + balance, 0);
+    };
+
     return {
         accounts,
         loading,
+        balances,
         addAccount,
         updateAccount,
         deleteAccount,
         setDefaultAccount,
         seedDefaults,
         getDefaultAccount,
+        getAccountBalance,
+        getTotalBalance,
         hasAccounts: accounts.length > 0
     };
 }

@@ -7,9 +7,8 @@ TBD
 - [ ] TBD
 
 ## Done summary
-TBD
-
+Added Account types (AccountType union, Account interface) and accountId to Transaction in types/index.ts. Created useAccounts hook with Firestore integration (users/{uid}/accounts) including CRUD operations, setDefaultAccount, and seedDefaults with Cash, Bank, E-Wallet presets.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 30ecc2919e0a2708873670bbcff84b1fbd2d99da
+- Tests: npx tsc --noEmit
 - PRs:
