@@ -82,3 +82,8 @@ export interface RecurringTransaction {
     tags?: string[]; // Tag IDs associated with this recurring transaction
     createdAt?: number;
 }
+
+export interface UserSettings {
+    currency: string; // ISO 4217 currency code (e.g., 'PHP', 'USD')
+    billReminderDays?: number[]; // Days before due date to send reminders (e.g., [1, 3, 7])
+}
