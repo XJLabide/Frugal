@@ -25,7 +25,7 @@ const ACCOUNT_TYPE_OPTIONS: { value: AccountType; label: string; icon: string }[
     { value: "other", label: "Other", icon: "CircleDollarSign" },
 ];
 
-const ACCOUNT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+const ACCOUNT_ICONS: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
     Wallet,
     Building2,
     Smartphone,
