@@ -198,3 +198,20 @@ input:focus, select:focus {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* --- Safe Area for Notched Devices (iPhone X+) --- */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* --- Mobile Touch Target Sizes --- */
+@media (max-width: 768px) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
