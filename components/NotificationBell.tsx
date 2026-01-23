@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Bell, Check, Trash2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -38,16 +39,27 @@ interface NotificationItemProps {
     notification: Notification;
     onMarkRead: (id: string) => void;
     onDelete: (id: string) => void;
+    onClick?: (notification: Notification) => void;
 }
 
-function NotificationItem({ notification, onMarkRead, onDelete }: NotificationItemProps) {
+function NotificationItem({ notification, onMarkRead, onDelete, onClick }: NotificationItemProps) {
+    const isClickable = notification.type === "budget_alert" || notification.type === "bill_reminder";
+
+    const handleClick = () => {
+        if (isClickable && onClick) {
+            onClick(notification);
+        }
+    };
+
     return (
         <div
+            onClick={handleClick}
             className={cn(
                 "group relative flex items-start gap-3 p-3 rounded-lg transition-colors",
                 notification.read
                     ? "bg-transparent"
-                    : "bg-indigo-50/50 dark:bg-indigo-950/20"
+                    : "bg-indigo-50/50 dark:bg-indigo-950/20",
+                isClickable && "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800"
             )}
         >
             {!notification.read && (
@@ -77,7 +89,10 @@ function NotificationItem({ notification, onMarkRead, onDelete }: NotificationIt
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 {!notification.read && (
                     <button
-                        onClick={() => onMarkRead(notification.id)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onMarkRead(notification.id);
+                        }}
                         className="p-1.5 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
                         title="Mark as read"
                     >
@@ -85,7 +100,10 @@ function NotificationItem({ notification, onMarkRead, onDelete }: NotificationIt
                     </button>
                 )}
                 <button
-                    onClick={() => onDelete(notification.id)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(notification.id);
+                    }}
                     className="p-1.5 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
                     title="Delete"
                 >
@@ -97,11 +115,34 @@ function NotificationItem({ notification, onMarkRead, onDelete }: NotificationIt
 }
 
 export function NotificationBell() {
+    const router = useRouter();
     const { notifications, unreadCount, loading, markAsRead, markAllAsRead, deleteNotification } =
         useNotifications();
     const [isOpen, setIsOpen] = React.useState(false);
     const dropdownRef = React.useRef<HTMLDivElement>(null);
     const buttonRef = React.useRef<HTMLButtonElement>(null);
+
+    // Handle notification click - navigate to relevant page
+    const handleNotificationClick = React.useCallback(
+        (notification: Notification) => {
+            // Mark as read
+            if (!notification.read) {
+                markAsRead(notification.id);
+            }
+
+            // Close dropdown
+            setIsOpen(false);
+
+            // Navigate based on notification type
+            if (notification.type === "budget_alert") {
+                router.push("/budgets");
+            } else if (notification.type === "bill_reminder") {
+                // Bill reminders will link to dashboard (upcoming bills section)
+                router.push("/");
+            }
+        },
+        [markAsRead, router]
+    );
 
     // Close dropdown when clicking outside
     React.useEffect(() => {
@@ -212,6 +253,7 @@ export function NotificationBell() {
                                         notification={notification}
                                         onMarkRead={markAsRead}
                                         onDelete={deleteNotification}
+                                        onClick={handleNotificationClick}
                                     />
                                 ))}
                             </div>

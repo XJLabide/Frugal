@@ -8,6 +8,7 @@ import { MobileNav } from "@/components/MobileNav";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { NotificationProvider } from "@/components/NotificationProvider";
 import { NotificationBell } from "@/components/NotificationBell";
+import { BudgetAlertMonitor } from "@/components/BudgetAlertMonitor";
 
 export default function DashboardLayout({
     children,
@@ -38,6 +39,8 @@ export default function DashboardLayout({
     return (
         <CurrencyProvider>
             <NotificationProvider>
+                {/* Budget alert monitor runs on app load to check thresholds */}
+                <BudgetAlertMonitor />
                 <div className="flex h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
                     <aside className="hidden md:block">
                         <Sidebar />
