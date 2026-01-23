@@ -32,20 +32,37 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
             onClick={onClose}
         >
             {/* Backdrop */}
             <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200" />
 
-            {/* Modal */}
+            {/* Modal - Bottom sheet on mobile, centered on desktop */}
             <div
-                className="relative w-full max-w-md max-h-[90vh] flex flex-col glass-card p-0 animate-in zoom-in-95 fade-in duration-200"
+                className={cn(
+                    "relative w-full flex flex-col p-0",
+                    // Mobile: bottom sheet style
+                    "max-h-[85vh] rounded-t-2xl",
+                    // Desktop: centered modal
+                    "sm:max-w-md sm:max-h-[85vh] sm:rounded-2xl sm:m-4",
+                    // Glass styling
+                    "bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl",
+                    "border border-slate-200/50 dark:border-slate-700/50",
+                    "shadow-xl",
+                    // Animation
+                    "animate-in slide-in-from-bottom-4 sm:zoom-in-95 fade-in duration-200"
+                )}
                 onClick={(e) => e.stopPropagation()}
             >
+                {/* Drag handle for mobile */}
+                <div className="flex justify-center pt-2 pb-1 sm:hidden">
+                    <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
+                </div>
+
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200/50 dark:border-slate-700/50 shrink-0">
-                    <h2 className="text-base sm:text-lg font-semibold">{title}</h2>
+                <div className="flex items-center justify-between px-4 py-3 sm:p-4 border-b border-slate-200/50 dark:border-slate-700/50 shrink-0">
+                    <h2 className="text-base font-semibold">{title}</h2>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -57,7 +74,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
                 </div>
 
                 {/* Content */}
-                <div className="p-4 sm:p-5 overflow-y-auto">
+                <div className="px-4 py-3 sm:p-4 overflow-y-auto">
                     {children}
                 </div>
             </div>

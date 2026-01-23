@@ -106,13 +106,13 @@ export function TagInput({ selectedTagIds, onTagsChange }: TagInputProps) {
     };
 
     return (
-        <div className="space-y-2">
-            <label className="text-sm font-medium">Tags</label>
+        <div className="space-y-1.5">
+            <label className="text-xs sm:text-sm font-medium">Tags <span className="text-slate-400 font-normal">(optional)</span></label>
 
             <div ref={containerRef} className="relative">
                 {/* Selected tags chips */}
                 <div
-                    className="flex flex-wrap gap-2 min-h-[44px] p-2 rounded-xl border-2 cursor-text transition-all focus-within:ring-2 focus-within:ring-indigo-500/20"
+                    className="flex flex-wrap gap-1.5 min-h-[36px] sm:min-h-[44px] p-1.5 sm:p-2 rounded-xl border-2 cursor-text transition-all focus-within:ring-2 focus-within:ring-indigo-500/20"
                     style={{
                         backgroundColor: "var(--input-bg)",
                         borderColor: "var(--input-border)",
@@ -122,13 +122,13 @@ export function TagInput({ selectedTagIds, onTagsChange }: TagInputProps) {
                     {selectedTags.map((tag) => (
                         <span
                             key={tag.id}
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-sm font-medium"
+                            className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-xs font-medium"
                             style={{
                                 backgroundColor: tag.color || "#6366f1",
                                 color: "#ffffff",
                             }}
                         >
-                            <TagIcon className="w-3 h-3" />
+                            <TagIcon className="w-2.5 h-2.5" />
                             {tag.name}
                             <button
                                 type="button"
@@ -136,9 +136,9 @@ export function TagInput({ selectedTagIds, onTagsChange }: TagInputProps) {
                                     e.stopPropagation();
                                     handleRemoveTag(tag.id);
                                 }}
-                                className="ml-1 hover:opacity-70 transition-opacity"
+                                className="ml-0.5 hover:opacity-70 transition-opacity"
                             >
-                                <X className="w-3 h-3" />
+                                <X className="w-2.5 h-2.5" />
                             </button>
                         </span>
                     ))}
@@ -155,7 +155,7 @@ export function TagInput({ selectedTagIds, onTagsChange }: TagInputProps) {
                         onFocus={() => setIsDropdownOpen(true)}
                         onKeyDown={handleKeyDown}
                         placeholder={selectedTags.length === 0 ? "Add tags..." : ""}
-                        className="flex-1 min-w-[100px] bg-transparent outline-none text-sm"
+                        className="flex-1 min-w-[80px] bg-transparent outline-none text-xs sm:text-sm"
                         style={{ color: "var(--input-text)" }}
                         disabled={loading}
                     />
