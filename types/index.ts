@@ -79,5 +79,6 @@ export interface RecurringTransaction {
     note?: string;
     location?: string;
     subCategory?: string;
+    tags?: string[]; // Tag IDs associated with this recurring transaction
     createdAt?: number;
 }

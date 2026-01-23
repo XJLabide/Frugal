@@ -2,9 +2,10 @@
 
 import { useState, useMemo } from "react";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useTags } from "@/hooks/useTags";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Trash2, ArrowUpRight, ArrowDownLeft, Search, TrendingUp, TrendingDown, Wallet, Pencil, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { Plus, Trash2, ArrowUpRight, ArrowDownLeft, Search, TrendingUp, TrendingDown, Wallet, Pencil, ChevronLeft, ChevronRight, ChevronDown, Tag as TagIcon } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TransactionForm } from "@/components/forms/TransactionForm";
@@ -18,6 +19,7 @@ import { useCategories } from "@/hooks/useCategories";
 export default function TransactionsPage() {
     const { transactions, loading, deleteTransaction } = useTransactions();
     const { categories } = useCategories(); // Fetch categories for filter
+    const { tags } = useTags(); // Fetch tags for displaying chips
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
     const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -304,6 +306,28 @@ export default function TransactionsPage() {
                                                             </>
                                                         )}
                                                     </div>
+                                                    {/* Tags display */}
+                                                    {transaction.tags && transaction.tags.length > 0 && (
+                                                        <div className="flex items-center gap-1 mt-1 flex-wrap">
+                                                            {transaction.tags.map((tagId) => {
+                                                                const tag = tags.find((t) => t.id === tagId);
+                                                                if (!tag) return null;
+                                                                return (
+                                                                    <span
+                                                                        key={tag.id}
+                                                                        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium"
+                                                                        style={{
+                                                                            backgroundColor: tag.color || "#6366f1",
+                                                                            color: "#ffffff",
+                                                                        }}
+                                                                    >
+                                                                        <TagIcon className="w-2.5 h-2.5" />
+                                                                        {tag.name}
+                                                                    </span>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 pl-13 sm:pl-0">
