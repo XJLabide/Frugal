@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useCategories } from "@/hooks/useCategories";
 import { CategorySelector } from "./CategorySelector";
+import { TagInput } from "./TagInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Transaction, TransactionType } from "@/types";
@@ -25,6 +26,7 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
     const [date, setDate] = useState(editingTransaction?.date || format(new Date(), "yyyy-MM-dd"));
     const [note, setNote] = useState(editingTransaction?.note || "");
     const [location, setLocation] = useState(editingTransaction?.location || "");
+    const [selectedTags, setSelectedTags] = useState<string[]>(editingTransaction?.tags || []);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Filter categories by type (still needed for default category selection fallback)
@@ -60,6 +62,7 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
                 note,
                 location,
                 subCategory: subCategory || undefined,
+                tags: selectedTags.length > 0 ? selectedTags : undefined,
             };
 
             if (editingTransaction) {
@@ -145,6 +148,11 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
                     onChange={(e) => setNote(e.target.value)}
                 />
             </div>
+
+            <TagInput
+                selectedTagIds={selectedTags}
+                onTagsChange={setSelectedTags}
+            />
 
             <Button type="submit" className="w-full" disabled={isSubmitting || !category}>
                 {isSubmitting ? (editingTransaction ? "Saving..." : "Adding...") : (editingTransaction ? "Save Changes" : "Add Transaction")}

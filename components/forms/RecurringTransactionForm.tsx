@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRecurringTransactions } from "@/hooks/useRecurringTransactions";
 import { useCategories } from "@/hooks/useCategories";
 import { CategorySelector } from "./CategorySelector";
+import { TagInput } from "./TagInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TransactionType, RecurringFrequency, RecurringTransaction } from "@/types";
@@ -26,6 +27,7 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
     const [frequency, setFrequency] = useState<RecurringFrequency>("monthly");
     const [startDate, setStartDate] = useState(format(new Date(), "yyyy-MM-dd"));
     const [note, setNote] = useState("");
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Filter categories by type (still needed for default category selection fallback)
@@ -42,6 +44,7 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
             setFrequency(editingTransaction.frequency);
             setStartDate(editingTransaction.startDate);
             setNote(editingTransaction.note || "");
+            setSelectedTags(editingTransaction.tags || []);
         }
     }, [editingTransaction]);
 
@@ -68,6 +71,7 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
                     startDate,
                     note,
                     subCategory: subCategory || undefined,
+                    tags: selectedTags.length > 0 ? selectedTags : undefined,
                 });
             } else {
                 await addRecurringTransaction({
@@ -80,6 +84,7 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
                     isActive: true,
                     note,
                     subCategory: subCategory || undefined,
+                    tags: selectedTags.length > 0 ? selectedTags : undefined,
                 });
             }
             onSuccess();
@@ -89,6 +94,7 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
                 setAmount("");
                 setNote("");
                 setSubCategory("");
+                setSelectedTags([]);
             }
         } catch (error) {
             console.error(error);
@@ -187,6 +193,11 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
                     onChange={(e) => setNote(e.target.value)}
                 />
             </div>
+
+            <TagInput
+                selectedTagIds={selectedTags}
+                onTagsChange={setSelectedTags}
+            />
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? "Saving..." : (editingTransaction ? "Update Recurring Transaction" : "Add Recurring Transaction")}

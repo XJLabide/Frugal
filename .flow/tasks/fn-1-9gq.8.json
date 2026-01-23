@@ -1,0 +1,14 @@
+{
+  "assignee": null,
+  "claim_note": "",
+  "claimed_at": null,
+  "created_at": "2026-01-23T17:33:32.601523Z",
+  "depends_on": [],
+  "epic": "fn-1-9gq",
+  "id": "fn-1-9gq.8",
+  "priority": null,
+  "spec_path": ".flow/tasks/fn-1-9gq.8.md",
+  "status": "todo",
+  "title": "Create Toast, NotificationBell, and NotificationProvider components",
+  "updated_at": "2026-01-23T17:33:32.601688Z"
+}

@@ -19,7 +19,8 @@ import {
     Legend
 } from "recharts";
 import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, isSameMonth, parseISO } from "date-fns";
-import { CURRENCY_SYMBOL, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { TrendingUp, TrendingDown, PieChart as PieChartIcon, BarChart3 } from "lucide-react";
 
 const COLORS = [
@@ -35,6 +36,7 @@ const COLORS = [
 
 export default function AnalyticsPage() {
     const { transactions, loading } = useTransactions();
+    const { currencySymbol } = useCurrency();
     const [timeRange, setTimeRange] = useState(6); // Months
 
     // 1. Monthly Trends (Income vs Expense)
@@ -130,7 +132,7 @@ export default function AnalyticsPage() {
                         <CardContent>
                             <div className="flex items-center justify-between">
                                 <span className="text-2xl font-bold">
-                                    {CURRENCY_SYMBOL}{stats.currentMonth.expense.toFixed(2)}
+                                    {currencySymbol}{stats.currentMonth.expense.toFixed(2)}
                                 </span>
                                 <div className={cn(
                                     "flex items-center text-sm font-medium",
@@ -153,7 +155,7 @@ export default function AnalyticsPage() {
                         <CardContent>
                             <div className="flex items-center justify-between">
                                 <span className="text-2xl font-bold">
-                                    {CURRENCY_SYMBOL}{stats.currentMonth.income.toFixed(2)}
+                                    {currencySymbol}{stats.currentMonth.income.toFixed(2)}
                                 </span>
                                 <div className={cn(
                                     "flex items-center text-sm font-medium",
@@ -179,7 +181,7 @@ export default function AnalyticsPage() {
                                     "text-2xl font-bold",
                                     stats.currentMonth.net >= 0 ? "text-green-600" : "text-red-600"
                                 )}>
-                                    {stats.currentMonth.net >= 0 ? '+' : ''}{CURRENCY_SYMBOL}{stats.currentMonth.net.toFixed(2)}
+                                    {stats.currentMonth.net >= 0 ? '+' : ''}{currencySymbol}{stats.currentMonth.net.toFixed(2)}
                                 </span>
                                 <span className="text-xs text-slate-500 px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">
                                     {stats.currentMonth.income > 0
@@ -221,13 +223,13 @@ export default function AnalyticsPage() {
                                         axisLine={false}
                                         tickLine={false}
                                         tick={{ fill: '#64748B', fontSize: 12 }}
-                                        tickFormatter={(value) => `${CURRENCY_SYMBOL}${value}`}
+                                        tickFormatter={(value) => `${currencySymbol}${value}`}
                                     />
                                     <Tooltip
                                         cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }}
                                         contentStyle={{ borderRadius: '12px', borderColor: '#E2E8F0', padding: '12px' }}
                                         itemStyle={{ fontSize: '14px', fontWeight: 500 }}
-                                        formatter={(value: number | undefined) => [`${CURRENCY_SYMBOL}${(value ?? 0).toFixed(2)}`, '']}
+                                        formatter={(value: number | undefined) => [`${currencySymbol}${(value ?? 0).toFixed(2)}`, '']}
                                     />
                                     <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
                                     <Bar dataKey="income" name="Income" fill="#22c55e" radius={[4, 4, 0, 0]} barSize={32} />
@@ -265,7 +267,7 @@ export default function AnalyticsPage() {
                                             ))}
                                         </Pie>
                                         <Tooltip
-                                            formatter={(value: number | undefined) => `${CURRENCY_SYMBOL}${(value ?? 0).toFixed(2)}`}
+                                            formatter={(value: number | undefined) => `${currencySymbol}${(value ?? 0).toFixed(2)}`}
                                             contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                         />
                                     </PieChart>
@@ -283,7 +285,7 @@ export default function AnalyticsPage() {
                                         </div>
                                         <div className="text-right">
                                             <div className="font-bold text-sm">
-                                                {CURRENCY_SYMBOL}{entry.value.toFixed(2)}
+                                                {currencySymbol}{entry.value.toFixed(2)}
                                             </div>
                                             <div className="text-xs text-slate-500">
                                                 {((entry.value / stats!.currentMonth.expense) * 100).toFixed(1)}%

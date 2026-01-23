@@ -5,7 +5,7 @@ import { useBudgets } from "@/hooks/useBudgets";
 import { useCategories } from "@/hooks/useCategories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CURRENCY_SYMBOL } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { AlertTriangle, Info } from "lucide-react";
 
 interface BudgetFormProps {
@@ -15,6 +15,7 @@ interface BudgetFormProps {
 export function BudgetForm({ onSuccess }: BudgetFormProps) {
     const { addBudget, overallAmount, remainingToAllocate, isOverAllocated, categoryBudgets } = useBudgets();
     const { categories } = useCategories();
+    const { currencySymbol } = useCurrency();
     const [amount, setAmount] = useState("");
     const [categoryId, setCategoryId] = useState("all");
     const [loading, setLoading] = useState(false);
@@ -95,7 +96,7 @@ export function BudgetForm({ onSuccess }: BudgetFormProps) {
             {categoryId !== 'all' && overallAmount > 0 && (
                 <div className={`rounded-lg p-3 text-sm ${isOverAllocated ? 'bg-red-50 dark:bg-red-950/20' : 'bg-green-50 dark:bg-green-950/20'}`}>
                     <p className={isOverAllocated ? 'text-red-700 dark:text-red-400' : 'text-green-700 dark:text-green-400'}>
-                        <strong>Remaining to allocate:</strong> {CURRENCY_SYMBOL}{remainingToAllocate.toFixed(2)} of {CURRENCY_SYMBOL}{overallAmount.toFixed(2)}
+                        <strong>Remaining to allocate:</strong> {currencySymbol}{remainingToAllocate.toFixed(2)} of {currencySymbol}{overallAmount.toFixed(2)}
                     </p>
                 </div>
             )}
@@ -120,7 +121,7 @@ export function BudgetForm({ onSuccess }: BudgetFormProps) {
                 <div className="rounded-lg bg-amber-50 dark:bg-amber-950/20 p-3 text-sm flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
                     <p className="text-amber-700 dark:text-amber-400">
-                        This amount exceeds your remaining allocation by {CURRENCY_SYMBOL}{(parsedAmount - remainingToAllocate).toFixed(2)}
+                        This amount exceeds your remaining allocation by {currencySymbol}{(parsedAmount - remainingToAllocate).toFixed(2)}
                     </p>
                 </div>
             )}
@@ -134,7 +135,7 @@ export function BudgetForm({ onSuccess }: BudgetFormProps) {
                             A budget for {categoryId === 'all' ? 'Overall' : categoryId} already exists.
                         </p>
                         <p className="text-red-600 dark:text-red-500 mt-1">
-                            Current limit: {CURRENCY_SYMBOL}{existingBudget.amount.toFixed(2)}. You cannot add a duplicate budget.
+                            Current limit: {currencySymbol}{existingBudget.amount.toFixed(2)}. You cannot add a duplicate budget.
                         </p>
                     </div>
                 </div>

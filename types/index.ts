@@ -31,6 +31,16 @@ export interface Transaction {
     type: TransactionType;
     createdAt?: number; // Timestamp
     subCategory?: string; // Selected subcategory
+    tags?: string[]; // Tag IDs associated with this transaction
+    accountId?: string; // Account ID for future account-based tracking
+}
+
+export interface Tag {
+    id: string;
+    userId: string;
+    name: string;
+    color?: string; // Hex code for tag color
+    createdAt?: number; // Timestamp
 }
 
 export interface Budget {
@@ -70,5 +80,52 @@ export interface RecurringTransaction {
     note?: string;
     location?: string;
     subCategory?: string;
+    tags?: string[]; // Tag IDs associated with this recurring transaction
     createdAt?: number;
+}
+
+export interface UserSettings {
+    currency: string; // ISO 4217 currency code (e.g., 'PHP', 'USD')
+    billReminderDays?: number[]; // Days before due date to send reminders (e.g., [1, 3, 7])
+}
+
+export type NotificationType = 'budget_alert' | 'bill_reminder' | 'goal_milestone' | 'system';
+
+export interface Notification {
+    id: string;
+    userId: string;
+    type: NotificationType;
+    title: string;
+    message: string;
+    read: boolean;
+    createdAt: number; // Timestamp
+    data?: Record<string, unknown>; // Additional payload (e.g., categoryId, goalId)
+}
+
+export type AccountType = 'bank' | 'ewallet' | 'cash' | 'credit' | 'other';
+
+export interface Account {
+    id: string;
+    userId: string;
+    name: string;
+    type: AccountType;
+    startingBalance: number;
+    icon?: string; // Icon name from lucide-react
+    color?: string; // Hex code or tailwind class
+    isDefault?: boolean;
+    createdAt?: number; // Timestamp
+}
+
+export interface Transfer {
+    id: string;
+    userId: string;
+    fromAccountId: string;
+    toAccountId: string;
+    amount: number;
+    date: string; // ISO date string YYYY-MM-DD
+    note?: string;
+    createdAt?: number; // Timestamp
+    // References to the generated transaction entries
+    fromTransactionId?: string; // Expense transaction from source account
+    toTransactionId?: string; // Income transaction to destination account
 }

@@ -10,7 +10,8 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { GoalForm } from "@/components/forms/GoalForm";
 import { Plus, Trash2, Target, Calendar, Sparkles, PiggyBank, Pencil, Wallet, MapPin } from "lucide-react";
 import { differenceInDays, parseISO } from "date-fns";
-import { cn, CURRENCY_SYMBOL } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { Goal } from "@/types";
 import { FundGoalModal } from "@/components/modals/FundGoalModal";
 import { useTransactions } from "@/hooks/useTransactions";
@@ -26,6 +27,7 @@ export default function GoalsPage() {
         totalSavedAmount,
         overallProgress
     } = useGoals();
+    const { currencySymbol } = useCurrency();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [addAmountModal, setAddAmountModal] = useState<string | null>(null);
     const [addAmount, setAddAmount] = useState("");
@@ -133,7 +135,7 @@ export default function GoalsPage() {
                                     <div className="h-9 w-40 bg-white/20 rounded animate-pulse mt-1" />
                                 ) : (
                                     <p className="text-3xl font-bold">
-                                        {CURRENCY_SYMBOL}{totalSavedAmount.toFixed(2)} <span className="text-lg opacity-80">/ {CURRENCY_SYMBOL}{totalTargetAmount.toFixed(2)}</span>
+                                        {currencySymbol}{totalSavedAmount.toFixed(2)} <span className="text-lg opacity-80">/ {currencySymbol}{totalTargetAmount.toFixed(2)}</span>
                                     </p>
                                 )}
                             </div>
@@ -155,7 +157,7 @@ export default function GoalsPage() {
                                 />
                             </div>
                             <p className="text-sm opacity-80">
-                                {goals.length} goal{goals.length !== 1 ? 's' : ''} • {CURRENCY_SYMBOL}{(totalTargetAmount - totalSavedAmount).toFixed(2)} remaining
+                                {goals.length} goal{goals.length !== 1 ? 's' : ''} • {currencySymbol}{(totalTargetAmount - totalSavedAmount).toFixed(2)} remaining
                             </p>
                         </div>
                     )}
@@ -223,8 +225,8 @@ export default function GoalsPage() {
 
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-end">
-                                        <span className="text-xl font-bold">{CURRENCY_SYMBOL}{goal.currentAmount.toFixed(2)}</span>
-                                        <span className="text-sm text-slate-500">of {CURRENCY_SYMBOL}{goal.targetAmount.toFixed(2)}</span>
+                                        <span className="text-xl font-bold">{currencySymbol}{goal.currentAmount.toFixed(2)}</span>
+                                        <span className="text-sm text-slate-500">of {currencySymbol}{goal.targetAmount.toFixed(2)}</span>
                                     </div>
 
                                     <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -331,7 +333,7 @@ export default function GoalsPage() {
                         autoFocus
                     />
                     <Button onClick={handleAddAmount} className="w-full" disabled={!addAmount}>
-                        Add {CURRENCY_SYMBOL}{addAmount || "0.00"}
+                        Add {currencySymbol}{addAmount || "0.00"}
                     </Button>
                 </div>
             </Modal>
