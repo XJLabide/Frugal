@@ -7,9 +7,8 @@ TBD
 - [ ] TBD
 
 ## Done summary
-TBD
-
+Added Tag interface and useTags hook with Firestore CRUD operations following existing hook patterns.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 2f9ce7db5d195da364cc91133830a201e8c3b085
+- Tests: npx tsc --noEmit
 - PRs:
