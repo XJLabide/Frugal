@@ -1,0 +1,14 @@
+{
+  "assignee": null,
+  "claim_note": "",
+  "claimed_at": null,
+  "created_at": "2026-01-23T17:33:28.335001Z",
+  "depends_on": [],
+  "epic": "fn-1-9gq",
+  "id": "fn-1-9gq.4",
+  "priority": null,
+  "spec_path": ".flow/tasks/fn-1-9gq.4.md",
+  "status": "todo",
+  "title": "Create useUserSettings hook for currency preference",
+  "updated_at": "2026-01-23T17:33:28.335176Z"
+}

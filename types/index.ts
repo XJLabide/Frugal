@@ -31,6 +31,15 @@ export interface Transaction {
     type: TransactionType;
     createdAt?: number; // Timestamp
     subCategory?: string; // Selected subcategory
+    tags?: string[]; // Tag IDs associated with this transaction
+}
+
+export interface Tag {
+    id: string;
+    userId: string;
+    name: string;
+    color?: string; // Hex code for tag color
+    createdAt?: number; // Timestamp
 }
 
 export interface Budget {
