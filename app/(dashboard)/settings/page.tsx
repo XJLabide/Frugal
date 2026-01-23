@@ -216,7 +216,7 @@ export default function SettingsPage() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="space-y-1">
                             <p className="font-medium">Display Currency</p>
                             <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -224,7 +224,7 @@ export default function SettingsPage() {
                             </p>
                         </div>
                         <select
-                            className="h-11 w-40 rounded-xl border-2 px-3 py-2 text-sm font-medium transition-all focus:ring-2 focus:ring-indigo-500/20"
+                            className="h-11 w-full sm:w-40 rounded-xl border-2 px-3 py-2 text-sm font-medium transition-all focus:ring-2 focus:ring-indigo-500/20"
                             style={{
                                 backgroundColor: 'var(--input-bg)',
                                 borderColor: 'var(--input-border)',
@@ -398,7 +398,7 @@ export default function SettingsPage() {
 
                     {/* Add new reminder day */}
                     <div className="flex items-center gap-3">
-                        <div className="flex-1 max-w-[200px]">
+                        <div className="flex-1 sm:max-w-[200px]">
                             <Input
                                 type="number"
                                 min="1"
@@ -553,7 +553,7 @@ export default function SettingsPage() {
                                 placeholder="Category name..."
                             />
                         </div>
-                        <div className="w-32 space-y-2">
+                        <div className="w-full sm:w-32 space-y-2">
                             <label className="text-sm font-medium">Type</label>
                             <select
                                 className="flex h-11 w-full rounded-xl border-2 px-3 py-2 text-sm transition-all focus:ring-2 focus:ring-indigo-500/20"

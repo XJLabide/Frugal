@@ -65,7 +65,7 @@ export function MonthYearPicker({ date, onChange, className }: MonthYearPickerPr
             </Button>
 
             {isOpen && (
-                <div className="absolute top-full mt-2 p-3 w-[280px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg z-50 animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute left-0 sm:left-auto top-full mt-2 p-3 w-[calc(100vw-2rem)] sm:w-[280px] max-w-[280px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg z-50 animate-in fade-in zoom-in-95 duration-200">
                     <div className="flex items-center justify-between mb-4">
                         <Button
                             variant="ghost"

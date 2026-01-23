@@ -50,7 +50,7 @@ export default function DashboardLayout({
                         <header className="flex items-center justify-end px-4 py-3 md:px-8 md:py-4">
                             <NotificationBell />
                         </header>
-                        <main className="flex-1 overflow-y-auto px-4 pb-24 md:px-8 md:pb-8">{children}</main>
+                        <main className="flex-1 overflow-y-auto px-4 pb-20 md:px-8 md:pb-8">{children}</main>
                     </div>
                     <MobileNav />
                 </div>

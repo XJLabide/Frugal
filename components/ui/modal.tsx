@@ -40,12 +40,12 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
 
             {/* Modal */}
             <div
-                className="relative w-full max-w-md glass-card p-0 animate-in zoom-in-95 fade-in duration-200"
+                className="relative w-full max-w-md max-h-[90vh] flex flex-col glass-card p-0 animate-in zoom-in-95 fade-in duration-200"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between p-5 border-b border-slate-200/50 dark:border-slate-700/50">
-                    <h2 className="text-lg font-semibold">{title}</h2>
+                <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200/50 dark:border-slate-700/50 shrink-0">
+                    <h2 className="text-base sm:text-lg font-semibold">{title}</h2>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -57,7 +57,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
                 </div>
 
                 {/* Content */}
-                <div className="p-5">
+                <div className="p-4 sm:p-5 overflow-y-auto">
                     {children}
                 </div>
             </div>

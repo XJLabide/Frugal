@@ -204,7 +204,7 @@ export function NotificationBell() {
             {isOpen && (
                 <div
                     ref={dropdownRef}
-                    className="absolute right-0 top-full mt-2 w-80 sm:w-96 glass-card p-0 animate-in fade-in slide-in-from-top-2 duration-200 z-50"
+                    className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-80 md:w-96 max-w-[384px] glass-card p-0 animate-in fade-in slide-in-from-top-2 duration-200 z-50"
                 >
                     {/* Header */}
                     <div className="flex items-center justify-between p-4 border-b border-slate-200/50 dark:border-slate-700/50">

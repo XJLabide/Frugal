@@ -168,7 +168,7 @@ export default function DashboardPage() {
                             Spending by Category
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="h-[320px]">
+                    <CardContent className="h-[240px] sm:h-[320px]">
                         <ExpensePieChart transactions={currentMonthTransactions} categories={categories} />
                     </CardContent>
                 </Card>

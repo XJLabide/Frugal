@@ -208,9 +208,9 @@ export default function AnalyticsPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="h-[300px] w-full">
+                        <div className="h-[240px] sm:h-[300px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                                <BarChart data={monthlyData} margin={{ top: 20, right: 10, left: 0, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                                     <XAxis
                                         dataKey="name"
@@ -250,7 +250,7 @@ export default function AnalyticsPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="grid md:grid-cols-2 gap-8 items-center">
-                            <div className="h-[300px] w-full">
+                            <div className="h-[240px] sm:h-[300px] w-full">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <PieChart>
                                         <Pie

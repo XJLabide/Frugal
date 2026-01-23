@@ -303,8 +303,8 @@ export default function TransactionsPage() {
                                                         <span className="shrink-0">{transaction.location || "—"}</span>
                                                         {transaction.note && (
                                                             <>
-                                                                <span className="text-slate-300 dark:text-slate-600">•</span>
-                                                                <span className="truncate max-w-[100px] sm:max-w-[150px]">{transaction.note}</span>
+                                                                <span className="text-slate-300 dark:text-slate-600 hidden sm:inline">•</span>
+                                                                <span className="truncate max-w-[120px] sm:max-w-[200px]">{transaction.note}</span>
                                                             </>
                                                         )}
                                                     </div>
@@ -332,10 +332,10 @@ export default function TransactionsPage() {
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 pl-13 sm:pl-0">
+                                            <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 pl-[52px] sm:pl-0">
                                                 <span
                                                     className={cn(
-                                                        "text-base sm:text-lg font-bold",
+                                                        "text-base sm:text-lg font-bold whitespace-nowrap",
                                                         transaction.type === "income"
                                                             ? "text-green-600 dark:text-green-500"
                                                             : "text-red-600 dark:text-red-500"
@@ -343,11 +343,11 @@ export default function TransactionsPage() {
                                                 >
                                                     {transaction.type === "income" ? "+" : "-"}{currencySymbol}{transaction.amount.toFixed(2)}
                                                 </span>
-                                                <div className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                                <div className="flex items-center gap-1">
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-9 w-9 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/20"
+                                                        className="h-10 w-10 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/20"
                                                         onClick={() => setEditingTransaction(transaction)}
                                                     >
                                                         <Pencil className="h-4 w-4" />
@@ -355,7 +355,7 @@ export default function TransactionsPage() {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-9 w-9 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
+                                                        className="h-10 w-10 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
                                                         onClick={() => setDeleteId(transaction.id)}
                                                     >
                                                         <Trash2 className="h-4 w-4" />

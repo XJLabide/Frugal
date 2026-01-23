@@ -193,8 +193,8 @@ export default function GoalsPage() {
                                         )}>
                                             <Target className="h-4 w-4 text-white" />
                                         </div>
-                                        <div>
-                                            <h4 className="font-semibold">{goal.name}</h4>
+                                        <div className="min-w-0">
+                                            <h4 className="font-semibold truncate">{goal.name}</h4>
                                             {daysInfo && (
                                                 <p className={cn("text-xs", daysInfo.color)}>
                                                     <Calendar className="inline h-3 w-3 mr-1" />
