@@ -87,3 +87,16 @@ export interface UserSettings {
     currency: string; // ISO 4217 currency code (e.g., 'PHP', 'USD')
     billReminderDays?: number[]; // Days before due date to send reminders (e.g., [1, 3, 7])
 }
+
+export type NotificationType = 'budget_alert' | 'bill_reminder' | 'goal_milestone' | 'system';
+
+export interface Notification {
+    id: string;
+    userId: string;
+    type: NotificationType;
+    title: string;
+    message: string;
+    read: boolean;
+    createdAt: number; // Timestamp
+    data?: Record<string, unknown>; // Additional payload (e.g., categoryId, goalId)
+}

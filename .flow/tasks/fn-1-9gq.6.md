@@ -7,9 +7,8 @@ TBD
 - [ ] TBD
 
 ## Done summary
-TBD
-
+Added CurrencyContext provider to share currency settings across the application, and added a Currency selector dropdown to the Settings page. Updated all dashboard pages and components to use the useCurrency() hook instead of hardcoded currency symbols.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: b3156325f3805ae3556931bce43fe688dbeb4311
+- Tests: npm run build
 - PRs:
