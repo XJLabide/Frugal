@@ -8,11 +8,12 @@ import { useGoals } from "@/hooks/useGoals";
 import { useBillReminders } from "@/hooks/useBillReminders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, ArrowUpRight, ArrowDownLeft, Wallet, TrendingUp, TrendingDown, Target, Calendar, Bell, BellRing, AlertTriangle } from "lucide-react";
+import { Plus, ArrowUpRight, ArrowDownLeft, Wallet, TrendingUp, TrendingDown, Target, Calendar, Bell, BellRing, AlertTriangle, ArrowLeftRight } from "lucide-react";
 import { ExpensePieChart } from "@/components/charts/ExpensePieChart";
 import { format, startOfMonth, endOfMonth, isWithinInterval, parseISO } from "date-fns";
 import { Modal } from "@/components/ui/modal";
 import { TransactionForm } from "@/components/forms/TransactionForm";
+import { TransferForm } from "@/components/forms/TransferForm";
 import { BillReminderMonitor } from "@/components/BillReminderMonitor";
 import { useState } from "react";
 import Link from "next/link";
@@ -28,6 +29,7 @@ export default function DashboardPage() {
     const { upcomingBills } = useBillReminders();
     const { currencySymbol, formatCurrency } = useCurrency();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
     const now = new Date();
     const currentMonthStart = startOfMonth(now);
@@ -107,10 +109,16 @@ export default function DashboardPage() {
                         Welcome back! Here's your financial overview.
                     </p>
                 </div>
-                <Button onClick={() => setIsModalOpen(true)} className="group w-full sm:w-auto">
-                    <Plus className="mr-2 h-4 w-4 transition-transform group-hover:rotate-90" />
-                    Quick Add
-                </Button>
+                <div className="flex gap-2 w-full sm:w-auto">
+                    <Button onClick={() => setIsModalOpen(true)} className="group flex-1 sm:flex-none">
+                        <Plus className="mr-2 h-4 w-4 transition-transform group-hover:rotate-90" />
+                        Quick Add
+                    </Button>
+                    <Button onClick={() => setIsTransferModalOpen(true)} variant="outline" className="group flex-1 sm:flex-none">
+                        <ArrowLeftRight className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
+                        Transfer
+                    </Button>
+                </div>
             </div>
 
             {/* Stat Cards */}
@@ -377,6 +385,14 @@ export default function DashboardPage() {
                 title="Add Transaction"
             >
                 <TransactionForm onSuccess={() => setIsModalOpen(false)} />
+            </Modal>
+
+            <Modal
+                isOpen={isTransferModalOpen}
+                onClose={() => setIsTransferModalOpen(false)}
+                title="Transfer Between Accounts"
+            >
+                <TransferForm onSuccess={() => setIsTransferModalOpen(false)} />
             </Modal>
         </div>
     );

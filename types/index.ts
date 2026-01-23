@@ -115,3 +115,17 @@ export interface Account {
     isDefault?: boolean;
     createdAt?: number; // Timestamp
 }
+
+export interface Transfer {
+    id: string;
+    userId: string;
+    fromAccountId: string;
+    toAccountId: string;
+    amount: number;
+    date: string; // ISO date string YYYY-MM-DD
+    note?: string;
+    createdAt?: number; // Timestamp
+    // References to the generated transaction entries
+    fromTransactionId?: string; // Expense transaction from source account
+    toTransactionId?: string; // Income transaction to destination account
+}
