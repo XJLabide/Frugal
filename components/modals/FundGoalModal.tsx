@@ -2,14 +2,12 @@
 
 import { useState } from "react";
 import { useGoals } from "@/hooks/useGoals";
-import { useTransactions } from "@/hooks/useTransactions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { Goal } from "@/types";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { Target, ArrowRight, Wallet } from "lucide-react";
-import { format } from "date-fns";
 
 interface FundGoalModalProps {
     isOpen: boolean;
@@ -19,8 +17,7 @@ interface FundGoalModalProps {
 }
 
 export function FundGoalModal({ isOpen, onClose, goal, availableBalance }: FundGoalModalProps) {
-    const { addToGoal } = useGoals();
-    const { addTransaction } = useTransactions();
+    const { fundGoal } = useGoals();
     const { currencySymbol, formatCurrency } = useCurrency();
     const [amount, setAmount] = useState("");
     const [loading, setLoading] = useState(false);
@@ -34,18 +31,8 @@ export function FundGoalModal({ isOpen, onClose, goal, availableBalance }: FundG
 
         setLoading(true);
         try {
-            // 1. Create an expense transaction (subtracts from balance)
-            await addTransaction({
-                amount: parsedAmount,
-                categoryId: "Goal Funding",
-                date: format(new Date(), "yyyy-MM-dd"),
-                note: `Funded goal: ${goal.name}`,
-                location: goal.location || "Savings",
-                type: "expense",
-            });
-
-            // 2. Add to the goal's current amount
-            await addToGoal(goal.id, parsedAmount);
+            // Atomic: creates expense transaction AND updates goal in single batch
+            await fundGoal(goal.id, parsedAmount, goal.name, goal.location);
 
             setAmount("");
             onClose();

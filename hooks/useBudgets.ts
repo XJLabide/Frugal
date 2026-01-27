@@ -16,6 +16,7 @@ export function useBudgets() {
     const { user } = useAuthStore();
     const [budgets, setBudgets] = useState<Budget[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
         if (!user) {
@@ -38,8 +39,9 @@ export function useBudgets() {
                 setBudgets(data);
                 setLoading(false);
             },
-            (error) => {
-                console.error("Error fetching budgets:", error);
+            (err) => {
+                console.error("Error fetching budgets:", err);
+                setError(err);
                 setLoading(false);
             }
         );
@@ -77,25 +79,50 @@ export function useBudgets() {
 
     const addBudget = async (budget: Omit<Budget, "id" | "userId">) => {
         if (!user) return;
-        await addDoc(collection(db, "users", user.uid, "budgets"), {
-            ...budget,
-            userId: user.uid,
-        });
+        try {
+            setError(null);
+            await addDoc(collection(db, "users", user.uid, "budgets"), {
+                ...budget,
+                userId: user.uid,
+            });
+        } catch (err) {
+            const error = err instanceof Error ? err : new Error("Failed to add budget");
+            console.error("Error adding budget:", error);
+            setError(error);
+            throw error;
+        }
     };
 
     const updateBudget = async (id: string, amount: number) => {
         if (!user) return;
-        await updateDoc(doc(db, "users", user.uid, "budgets", id), { amount });
-    }
+        try {
+            setError(null);
+            await updateDoc(doc(db, "users", user.uid, "budgets", id), { amount });
+        } catch (err) {
+            const error = err instanceof Error ? err : new Error("Failed to update budget");
+            console.error("Error updating budget:", error);
+            setError(error);
+            throw error;
+        }
+    };
 
     const deleteBudget = async (id: string) => {
         if (!user) return;
-        await deleteDoc(doc(db, "users", user.uid, "budgets", id));
+        try {
+            setError(null);
+            await deleteDoc(doc(db, "users", user.uid, "budgets", id));
+        } catch (err) {
+            const error = err instanceof Error ? err : new Error("Failed to delete budget");
+            console.error("Error deleting budget:", error);
+            setError(error);
+            throw error;
+        }
     };
 
     return {
         budgets,
         loading,
+        error,
         addBudget,
         updateBudget,
         deleteBudget,

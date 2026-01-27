@@ -1,15 +1,31 @@
 "use client";
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import { Transaction, Category } from "@/types";
+import { Transaction } from "@/types";
 import { useCurrency } from "@/contexts/CurrencyContext";
+
+// Diverse color palette for chart segments
+const CHART_COLORS = [
+    "#6366f1", // Indigo
+    "#ec4899", // Pink
+    "#10b981", // Emerald
+    "#f59e0b", // Amber
+    "#8b5cf6", // Violet
+    "#3b82f6", // Blue
+    "#14b8a6", // Teal
+    "#ef4444", // Red
+    "#84cc16", // Lime
+    "#f97316", // Orange
+    "#06b6d4", // Cyan
+    "#a855f7", // Purple
+];
 
 interface ExpensePieChartProps {
     transactions: Transaction[];
-    categories: Category[];
+    categories?: unknown; // Kept for backwards compatibility, not used
 }
 
-export function ExpensePieChart({ transactions, categories }: ExpensePieChartProps) {
+export function ExpensePieChart({ transactions }: ExpensePieChartProps) {
     const { currencySymbol } = useCurrency();
 
     // Aggregate expenses by category
@@ -21,13 +37,11 @@ export function ExpensePieChart({ transactions, categories }: ExpensePieChartPro
         }
     });
 
-    const data = Object.keys(dataMap).map(categoryName => {
-        // Find category color
-        const category = categories.find(c => c.name === categoryName);
+    const data = Object.keys(dataMap).map((categoryName, index) => {
         return {
             name: categoryName,
             value: dataMap[categoryName],
-            color: category?.color || "#94a3b8" // Default slate-400
+            color: CHART_COLORS[index % CHART_COLORS.length]
         };
     }).filter(d => d.value > 0);
 

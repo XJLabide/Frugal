@@ -39,9 +39,9 @@ export function useRecurringTransactions() {
     const processDueTransactions = useCallback(async (transactions: RecurringTransaction[], userId: string) => {
         const today = format(new Date(), 'yyyy-MM-dd');
 
-        transactions.forEach(async (rt) => {
+        for (const rt of transactions) {
             if (!rt.isActive || isAfter(parseISO(rt.nextDueDate), parseISO(today))) {
-                return;
+                continue;
             }
 
             // Transaction is due!
@@ -54,11 +54,12 @@ export function useRecurringTransactions() {
                     userId: userId,
                     amount: rt.amount,
                     categoryId: rt.categoryId,
+                    accountId: rt.accountId ?? null,
                     date: rt.nextDueDate,
                     note: `Recurring: ${rt.name}` + (rt.note ? ` - ${rt.note}` : ''),
                     location: rt.location || 'Recurring',
                     type: rt.type,
-                    subCategory: rt.subCategory ?? null, // Use null coalescing to ensure null if undefined/empty
+                    subCategory: rt.subCategory ?? null,
                     createdAt: Date.now(),
                 } as Transaction);
 
@@ -72,7 +73,7 @@ export function useRecurringTransactions() {
             } catch (error) {
                 console.error("Error processing recurring transaction:", error);
             }
-        });
+        }
     }, []);
 
     useEffect(() => {

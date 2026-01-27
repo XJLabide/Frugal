@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useAccounts } from "@/hooks/useAccounts";
 import { useTags } from "@/hooks/useTags";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,9 +20,24 @@ import { useCategories } from "@/hooks/useCategories";
 
 export default function TransactionsPage() {
     const { transactions, loading, deleteTransaction } = useTransactions();
+    const { accounts } = useAccounts(); // Fetch accounts for displaying account names
     const { categories } = useCategories(); // Fetch categories for filter
     const { tags } = useTags(); // Fetch tags for displaying chips
     const { currencySymbol } = useCurrency();
+
+    // Helper to get account name by ID
+    const getAccountName = (accountId?: string) => {
+        if (!accountId) return null;
+        const account = accounts.find(a => a.id === accountId);
+        return account?.name || null;
+    };
+
+    // Helper to get account color by ID
+    const getAccountColor = (accountId?: string) => {
+        if (!accountId) return null;
+        const account = accounts.find(a => a.id === accountId);
+        return account?.color || "#6366f1";
+    };
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
     const [deleteId, setDeleteId] = useState<string | null>(null);

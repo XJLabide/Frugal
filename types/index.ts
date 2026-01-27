@@ -81,6 +81,7 @@ export interface RecurringTransaction {
     location?: string;
     subCategory?: string;
     tags?: string[]; // Tag IDs associated with this recurring transaction
+    accountId?: string; // Account ID for when this generates transactions
     createdAt?: number;
 }
 

@@ -14,6 +14,8 @@ interface AccountSelectorProps {
     required?: boolean;
     label?: string;
     showBalance?: boolean;
+    /** Use compact styling to match other form fields */
+    compact?: boolean;
 }
 
 export function AccountSelector({
@@ -24,8 +26,9 @@ export function AccountSelector({
     required = false,
     label = "Account",
     showBalance = true,
+    compact = false,
 }: AccountSelectorProps) {
-    const { accounts, loading, hasAccounts, seedDefaults } = useAccounts();
+    const { accounts, loading, hasAccounts, seedDefaults, getAccountBalance } = useAccounts();
     const { formatCurrency } = useCurrency();
 
     // Support backwards compatibility: if using legacy location prop, convert to account selection
@@ -44,24 +47,38 @@ export function AccountSelector({
     };
 
     return (
-        <div className="space-y-2">
-            <label className="text-sm font-medium">{label}</label>
+        <div className={compact ? "space-y-1.5" : "space-y-2"}>
+            <label className={compact ? "text-xs sm:text-sm font-medium" : "text-sm font-medium"}>
+                {label}
+                {required && <span className="text-red-500 ml-0.5">*</span>}
+            </label>
             {loading ? (
-                <p className="text-sm text-slate-500">Loading accounts...</p>
+                <div 
+                    className={`flex items-center ${compact ? "h-9 sm:h-11" : "h-11"} w-full rounded-xl border-2 px-3`}
+                    style={{
+                        backgroundColor: 'var(--input-bg)',
+                        borderColor: 'var(--input-border)',
+                    }}
+                >
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600 animate-pulse" />
+                        <div className="h-4 w-24 bg-slate-300 dark:bg-slate-600 rounded animate-pulse" />
+                    </div>
+                </div>
             ) : !hasAccounts ? (
-                <div className="text-sm text-amber-600 bg-amber-50 p-2 rounded">
+                <div className="text-sm text-amber-600 bg-amber-50 dark:bg-amber-950/50 dark:text-amber-400 p-2 rounded-xl border-2 border-amber-200 dark:border-amber-800">
                     No accounts found.{" "}
                     <button
                         type="button"
                         onClick={() => seedDefaults()}
-                        className="underline font-bold hover:text-amber-800"
+                        className="underline font-bold hover:text-amber-800 dark:hover:text-amber-300"
                     >
                         Add Default Accounts
                     </button>
                 </div>
             ) : (
                 <select
-                    className="flex h-11 w-full rounded-xl border-2 px-3 py-2 text-sm transition-all focus:ring-2 focus:ring-indigo-500/20"
+                    className={`flex ${compact ? "h-9 sm:h-11 text-sm" : "h-11 text-sm"} w-full rounded-xl border-2 px-3 py-2 transition-all focus:ring-2 focus:ring-indigo-500/20`}
                     style={{
                         backgroundColor: 'var(--input-bg)',
                         borderColor: 'var(--input-border)',
@@ -75,7 +92,7 @@ export function AccountSelector({
                     {accounts.map((account) => (
                         <option key={account.id} value={account.id}>
                             {account.name}
-                            {showBalance && ` (${formatCurrency(account.startingBalance)})`}
+                            {showBalance && ` (${formatCurrency(getAccountBalance(account.id))})`}
                         </option>
                     ))}
                 </select>

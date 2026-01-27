@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useCategories } from "@/hooks/useCategories";
 import { CategorySelector } from "./CategorySelector";
+import { AccountSelector } from "./AccountSelector";
 import { TagInput } from "./TagInput";
+import { useAccounts } from "@/hooks/useAccounts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Transaction, TransactionType } from "@/types";
@@ -18,9 +20,11 @@ interface TransactionFormProps {
 export function TransactionForm({ onSuccess, editingTransaction }: TransactionFormProps) {
     const { addTransaction, updateTransaction } = useTransactions();
     const { categories } = useCategories(); // Kept for filteredCategories logic fallback
+    const { getDefaultAccount } = useAccounts();
 
     const [amount, setAmount] = useState(editingTransaction?.amount.toString() || "");
     const [type, setType] = useState<TransactionType>(editingTransaction?.type || "expense");
+    const [accountId, setAccountId] = useState(editingTransaction?.accountId || "");
     const [category, setCategory] = useState(editingTransaction?.categoryId || "");
     const [subCategory, setSubCategory] = useState(editingTransaction?.subCategory || "");
     const [date, setDate] = useState(editingTransaction?.date || format(new Date(), "yyyy-MM-dd"));
@@ -28,6 +32,16 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
     const [location, setLocation] = useState(editingTransaction?.location || "");
     const [selectedTags, setSelectedTags] = useState<string[]>(editingTransaction?.tags || []);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Auto-select default account for new transactions
+    useEffect(() => {
+        if (!editingTransaction && !accountId) {
+            const defaultAccount = getDefaultAccount();
+            if (defaultAccount) {
+                setAccountId(defaultAccount.id);
+            }
+        }
+    }, [editingTransaction, accountId, getDefaultAccount]);
 
     // Filter categories by type (still needed for default category selection fallback)
     const filteredCategories = categories.filter(c => c.type === type);
@@ -58,9 +72,10 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
                 amount: parseFloat(amount),
                 type,
                 categoryId: category,
+                accountId,
                 date,
                 note,
-                location,
+                location: location || undefined,
                 subCategory: subCategory || undefined,
                 tags: selectedTags.length > 0 ? selectedTags : undefined,
             };
@@ -114,6 +129,15 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
                 />
             </div>
 
+            {/* Account - Required */}
+            <AccountSelector
+                selectedAccountId={accountId}
+                onAccountChange={setAccountId}
+                required={true}
+                compact={true}
+                showBalance={true}
+            />
+
             <CategorySelector
                 type={type}
                 selectedCategory={category}
@@ -161,7 +185,7 @@ export function TransactionForm({ onSuccess, editingTransaction }: TransactionFo
                 onTagsChange={setSelectedTags}
             />
 
-            <Button type="submit" className="w-full h-10 sm:h-11 mt-2" disabled={isSubmitting || !category}>
+            <Button type="submit" className="w-full h-10 sm:h-11 mt-2" disabled={isSubmitting || !category || !accountId}>
                 {isSubmitting ? (editingTransaction ? "Saving..." : "Adding...") : (editingTransaction ? "Save Changes" : "Add Transaction")}
             </Button>
         </form>

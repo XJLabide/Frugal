@@ -9,6 +9,7 @@ import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { NotificationProvider } from "@/components/NotificationProvider";
 import { NotificationBell } from "@/components/NotificationBell";
 import { BudgetAlertMonitor } from "@/components/BudgetAlertMonitor";
+import { ConnectionStatusBanner } from "@/components/ConnectionStatusBanner";
 
 export default function DashboardLayout({
     children,
@@ -46,6 +47,8 @@ export default function DashboardLayout({
                         <Sidebar />
                     </aside>
                     <div className="flex-1 flex flex-col overflow-hidden">
+                        {/* Connection status banner */}
+                        <ConnectionStatusBanner />
                         {/* Top bar with notification bell */}
                         <header className="flex items-center justify-end px-4 py-3 md:px-8 md:py-4">
                             <NotificationBell />

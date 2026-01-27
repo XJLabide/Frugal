@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRecurringTransactions } from "@/hooks/useRecurringTransactions";
 import { useCategories } from "@/hooks/useCategories";
 import { CategorySelector } from "./CategorySelector";
+import { AccountSelector } from "./AccountSelector";
 import { TagInput } from "./TagInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,7 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
     const [frequency, setFrequency] = useState<RecurringFrequency>("monthly");
     const [startDate, setStartDate] = useState(format(new Date(), "yyyy-MM-dd"));
     const [note, setNote] = useState("");
+    const [accountId, setAccountId] = useState("");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,6 +46,7 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
             setFrequency(editingTransaction.frequency);
             setStartDate(editingTransaction.startDate);
             setNote(editingTransaction.note || "");
+            setAccountId(editingTransaction.accountId || "");
             setSelectedTags(editingTransaction.tags || []);
         }
     }, [editingTransaction]);
@@ -72,6 +75,7 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
                     note,
                     subCategory: subCategory || undefined,
                     tags: selectedTags.length > 0 ? selectedTags : undefined,
+                    accountId: accountId || undefined,
                 });
             } else {
                 await addRecurringTransaction({
@@ -85,6 +89,7 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
                     note,
                     subCategory: subCategory || undefined,
                     tags: selectedTags.length > 0 ? selectedTags : undefined,
+                    accountId: accountId || undefined,
                 });
             }
             onSuccess();
@@ -94,6 +99,7 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
                 setAmount("");
                 setNote("");
                 setSubCategory("");
+                setAccountId("");
                 setSelectedTags([]);
             }
         } catch (error) {
@@ -145,6 +151,15 @@ export function RecurringTransactionForm({ onSuccess, editingTransaction }: Recu
                     required
                 />
             </div>
+
+            {/* Account - Optional for recurring */}
+            <AccountSelector
+                selectedAccountId={accountId}
+                onAccountChange={setAccountId}
+                required={false}
+                label="Account (optional)"
+                showBalance={true}
+            />
 
             <CategorySelector
                 type={type}

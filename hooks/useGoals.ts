@@ -6,11 +6,13 @@ import {
     addDoc,
     deleteDoc,
     doc,
-    updateDoc
+    updateDoc,
+    increment,
+    writeBatch
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Goal } from "@/types";
+import { Goal, Transaction } from "@/types";
 
 export function useGoals() {
     const { user } = useAuthStore();
@@ -65,12 +67,44 @@ export function useGoals() {
 
     const addToGoal = async (id: string, amount: number) => {
         if (!user) return;
-        const goal = goals.find(g => g.id === id);
-        if (goal) {
-            await updateDoc(doc(db, "users", user.uid, "goals", id), {
-                currentAmount: goal.currentAmount + amount
-            });
-        }
+        await updateDoc(doc(db, "users", user.uid, "goals", id), {
+            currentAmount: increment(amount)
+        });
+    };
+
+    // Atomic goal funding: creates expense transaction AND updates goal in a single batch
+    const fundGoal = async (
+        goalId: string,
+        amount: number,
+        goalName: string,
+        location?: string | null
+    ) => {
+        if (!user) return;
+
+        const batch = writeBatch(db);
+        const today = new Date().toISOString().split("T")[0];
+
+        // 1. Create expense transaction
+        const transactionRef = doc(collection(db, "users", user.uid, "transactions"));
+        batch.set(transactionRef, {
+            userId: user.uid,
+            amount,
+            categoryId: "Goal Funding",
+            date: today,
+            note: `Funded goal: ${goalName}`,
+            location: location || "Savings",
+            type: "expense",
+            createdAt: Date.now(),
+        } as Transaction);
+
+        // 2. Update goal amount atomically
+        const goalRef = doc(db, "users", user.uid, "goals", goalId);
+        batch.update(goalRef, {
+            currentAmount: increment(amount)
+        });
+
+        // Commit both operations atomically
+        await batch.commit();
     };
 
     const deleteGoal = async (id: string) => {
@@ -89,6 +123,7 @@ export function useGoals() {
         addGoal,
         updateGoal,
         addToGoal,
+        fundGoal,
         deleteGoal,
         totalTargetAmount,
         totalSavedAmount,
