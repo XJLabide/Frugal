@@ -7,6 +7,7 @@ import {
     BillReminderSettings,
     RecurringTransactionsSettings,
     CategoriesSettings,
+    ResetSettings,
 } from "@/components/settings";
 
 export default function SettingsPage() {
@@ -26,6 +27,7 @@ export default function SettingsPage() {
             <BillReminderSettings />
             <RecurringTransactionsSettings />
             <CategoriesSettings />
+            <ResetSettings />
         </div>
     );
 }
